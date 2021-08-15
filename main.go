@@ -214,7 +214,6 @@ func setupTwitch() {
 	err := twitchClient.Connect()
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 }
 
@@ -227,7 +226,6 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err.Error())
-		os.Exit(1)
 	}
 
 	log.Println("Using Config:")
