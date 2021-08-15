@@ -110,7 +110,6 @@ func onConnect() {
 }
 
 func onMessage(m twitch.PrivateMessage) {
-	prettyPrint(m)
 	if m.Message == "!help" {
 		twitchClient.Say(m.Channel, "!help - show this message")
 	}
@@ -124,26 +123,29 @@ func onMessage(m twitch.PrivateMessage) {
 
 		// If no arg was provided, search for the channel name
 		var arguments []string
-		if len(split) < 1 {
-			arguments[0] = m.Channel
+		if len(split) == 1 {
+			arguments = append(arguments, m.Channel)
+		} else {
+			// get all values after first word
+			arguments = split[1:]
 		}
-		// get all values after first word
-		arguments = split[1:]
 
-		summoner, err := riotClient.GetBySummonerName(ctx, region.EUW1, strings.Join(arguments, " "))
+		streamerName := strings.Join(arguments, " ")
+
+		summoner, err := riotClient.GetBySummonerName(ctx, region.EUW1, streamerName)
 		if err != nil {
 			log.Println("GetBySummonerName:", err)
+			twitchClient.Say(m.Channel, fmt.Sprintf("%s scheint nicht in der Datenbank zu sein.", streamerName))
 			return
 		}
-		prettyPrint(summoner)
 
 		// get current game
 		activeGame, err := riotClient.GetCurrentGameInfoBySummoner(ctx, region.EUW1, summoner.ID)
 		if err != nil {
 			log.Println("GetCurrentGameInfoBySummoner:", err)
+			twitchClient.Say(m.Channel, fmt.Sprintf("%s scheint in keinen Game zu sein.", streamerName))
 			return
 		}
-		prettyPrint(activeGame)
 
 		// iterate through all champions in the game and print their champion name
 		var playerChamps []string
@@ -154,8 +156,6 @@ func onMessage(m twitch.PrivateMessage) {
 				log.Println("GetChampionByID:", err)
 				return
 			}
-			//prettyPrint(champion)
-			prettyPrint(participant.SummonerName)
 
 			var champName string
 
