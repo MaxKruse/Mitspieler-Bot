@@ -1,13 +1,20 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"strings"
 
 	// custom imports
 	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/yuhanfang/riot/apiclient"
+	"github.com/yuhanfang/riot/constants/region"
+	"github.com/yuhanfang/riot/ratelimit"
 )
 
 // structs
@@ -36,6 +43,15 @@ var (
 
 	// flags
 	configPath = flag.String("config", "config.json", "Path to config file")
+
+	// bg context
+	ctx = context.Background()
+
+	// riot api client
+	riotClient apiclient.Client
+
+	// twitch client
+	twitchClient *twitch.Client
 )
 
 func createDefaults() {
@@ -90,6 +106,88 @@ func onConnect() {
 
 func onMessage(m twitch.PrivateMessage) {
 	prettyPrint(m)
+	if m.Message == "!help" {
+		twitchClient.Say(m.Channel, "!help - show this message")
+	}
+	if m.Message == "!version" {
+		twitchClient.Say(m.Channel, VERSION)
+	}
+	// if m.Message contains "!test"
+	if strings.Contains(m.Message, "!mitspieler") {
+		// split the message
+		split := strings.Split(m.Message, " ")
+
+		// If no arg was provided, search for the channel name
+		var arguments []string
+		if len(split) < 1 {
+			arguments[0] = m.Channel
+		}
+		// get all values after first word
+		arguments = split[1:]
+
+		summoner, err := riotClient.GetBySummonerName(ctx, region.EUW1, strings.Join(arguments, " "))
+		if err != nil {
+			log.Println("GetBySummonerName:", err)
+			return
+		}
+		prettyPrint(summoner)
+
+		// get current game
+		activeGame, err := riotClient.GetCurrentGameInfoBySummoner(ctx, region.EUW1, summoner.ID)
+		if err != nil {
+			log.Println("GetCurrentGameInfoBySummoner:", err)
+			return
+		}
+		prettyPrint(activeGame)
+
+		// iterate through all champions in the game and print their champion name
+		var playerChamps []string
+
+		for _, participant := range activeGame.Participants {
+			//champion, err := riotClient.GetChampionByID(ctx, region.EUW1, champion.Champion(participant.ChampionId))
+			if err != nil {
+				log.Println("GetChampionByID:", err)
+				return
+			}
+			//prettyPrint(champion)
+			prettyPrint(participant.SummonerName)
+
+			playerChamps = append(playerChamps, fmt.Sprintf("%s (%d)", participant.SummonerName, participant.ChampionId))
+		}
+		prettyPrint(playerChamps)
+		twitchClient.Say(m.Channel, "Mitspieler: "+strings.Join(playerChamps, ", "))
+
+	}
+}
+
+func setupRiot() {
+	// make riot api client
+	log.Println("Connecting to Riot API...")
+	httpClient := http.DefaultClient
+	limiter := ratelimit.NewLimiter()
+	riotClient = apiclient.New(config.RIOT_API_KEY, httpClient, limiter)
+}
+
+func setupTwitch() {
+	// create a new client
+	twitchClient = twitch.NewClient(config.TWITCH_USERNAME, config.TWITCH_OAUTH)
+
+	// Set "On" event handlers
+	twitchClient.OnConnect(onConnect)
+	twitchClient.OnPrivateMessage(onMessage)
+
+	// Join channels
+	log.Println("Joining channels:", config.TWITCH_CHANNELS)
+	twitchClient.Join(config.TWITCH_CHANNELS...)
+	defer twitchClient.Disconnect()
+
+	// Connect to twitch
+	log.Println("Connecting to twitch...")
+	err := twitchClient.Connect()
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 }
 
 func main() {
@@ -107,21 +205,9 @@ func main() {
 	log.Println("Using Config:")
 	prettyPrint(config)
 
-	// create a new client
-	client := twitch.NewClient(config.TWITCH_USERNAME, config.TWITCH_OAUTH)
+	go setupRiot()
+	go setupTwitch()
 
-	// Set "On" event handlers
-	client.OnConnect(onConnect)
-	client.OnPrivateMessage(onMessage)
-
-	// Connect to twitch
-	err = client.Connect()
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
-	}
-
-	// Join channels
-	client.Join(config.TWITCH_CHANNELS...)
-
+	// wait for CTRL+C
+	select {}
 }
