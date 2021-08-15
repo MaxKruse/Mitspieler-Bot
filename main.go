@@ -167,7 +167,7 @@ func onMessage(m twitch.PrivateMessage) {
 			}
 
 			// find champion name from list of all champions
-			playerChamps = append(playerChamps, fmt.Sprintf("%s (%s)", participant.SummonerName, champName))
+			playerChamps = append(playerChamps, fmt.Sprintf("%s (%s)", champName, participant.SummonerName))
 		}
 		prettyPrint(playerChamps)
 		twitchClient.Say(m.Channel, "Mitspieler: "+strings.Join(playerChamps, ", "))
