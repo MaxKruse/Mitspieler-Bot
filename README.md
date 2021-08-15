@@ -10,6 +10,12 @@ Then run it
 
 > ./my_cool_bot --help
 
+## Todo
+
+1. Build Database of lolpro players
+2. Associate Twitch Channel name with Player Aliases
+3. Only print out relevant player names
+
 ## Credits
 
 * <https://github.com/gempir/go-twitch-irc>
