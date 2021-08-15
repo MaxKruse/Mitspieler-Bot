@@ -13,8 +13,10 @@ import (
 	// custom imports
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/yuhanfang/riot/apiclient"
+	"github.com/yuhanfang/riot/constants/language"
 	"github.com/yuhanfang/riot/constants/region"
 	"github.com/yuhanfang/riot/ratelimit"
+	"github.com/yuhanfang/riot/staticdata"
 )
 
 // structs
@@ -52,6 +54,9 @@ var (
 
 	// twitch client
 	twitchClient *twitch.Client
+
+	// list of all champions, used for looking up champion name by id
+	champions *staticdata.ChampionList
 )
 
 func createDefaults() {
@@ -152,7 +157,17 @@ func onMessage(m twitch.PrivateMessage) {
 			//prettyPrint(champion)
 			prettyPrint(participant.SummonerName)
 
-			playerChamps = append(playerChamps, fmt.Sprintf("%s (%d)", participant.SummonerName, participant.ChampionId))
+			var champName string
+
+			for _, champ := range champions.Data {
+				if champ.Key == fmt.Sprint(participant.ChampionId) {
+					champName = champ.Name
+					break
+				}
+			}
+
+			// find champion name from list of all champions
+			playerChamps = append(playerChamps, fmt.Sprintf("%s (%s)", participant.SummonerName, champName))
 		}
 		prettyPrint(playerChamps)
 		twitchClient.Say(m.Channel, "Mitspieler: "+strings.Join(playerChamps, ", "))
@@ -166,6 +181,19 @@ func setupRiot() {
 	httpClient := http.DefaultClient
 	limiter := ratelimit.NewLimiter()
 	riotClient = apiclient.New(config.RIOT_API_KEY, httpClient, limiter)
+
+	staticdataClient := staticdata.New(http.DefaultClient)
+	versions, err := staticdataClient.Versions(ctx)
+	if err != nil {
+		log.Println("Error getting versions:", err)
+		return
+	}
+
+	champions, err = staticdataClient.Champions(ctx, versions[0], language.EnglishUnitedStates)
+	if err != nil {
+		log.Println("Error getting champions:", err)
+		return
+	}
 }
 
 func setupTwitch() {
