@@ -12,8 +12,8 @@ Then run it
 
 ## Todo
 
-1. Build Database of lolpro players
-2. Associate Twitch Channel name with Player Aliases
+1. Build Database of lolpro players (endpoint: <https://api.lolpros.gg/es/ladder?page=1&sort=rank&order=desc>)
+2. Associate Twitch Channel name with Player Aliases (endpoint: <https://api.lolpros.gg/es/players/player_name>)
 3. Only print out relevant player names
 
 ## Credits
