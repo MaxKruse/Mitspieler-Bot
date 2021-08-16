@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -264,6 +265,14 @@ func setupTwitch() {
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	logfile, err := os.OpenFile("server.log", os.O_APPEND|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	multiwriter := io.MultiWriter(os.Stdout, logfile)
+	log.SetOutput(multiwriter)
+	log.Println("Starting server...")
+	defer logfile.Close()
 
 	ratelimiter = uber.New(5, uber.Per(60*time.Second))
 
@@ -274,7 +283,7 @@ func main() {
 	log.Println("Mitspieler Bot")
 	log.Println("Version:", VERSION)
 
-	err := loadConfig(*configPath)
+	err = loadConfig(*configPath)
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -299,4 +308,5 @@ func main() {
 
 	// wait for CTRL+C
 	select {}
+
 }
