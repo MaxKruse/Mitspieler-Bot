@@ -68,15 +68,13 @@ const (
 )
 
 var (
-	httpClient = &http.Client{}
-
 	players = flag.Int("players", 50, "Number of players to pull")
 
 	db *gorm.DB
 
 	Streamers []Streamer
 
-	ratelimiter = ratelimit.New(10)
+	ratelimiter = ratelimit.New(2)
 )
 
 func getLadderUrl(page int) string {
@@ -97,6 +95,7 @@ func makeApiCall(url string) ([]byte, error) {
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
+	var httpClient http.Client
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -107,6 +106,7 @@ func makeApiCall(url string) ([]byte, error) {
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		prettyPrint(bytes)
 		log.Fatal(err)
 		return nil, err
 	}
@@ -116,6 +116,9 @@ func makeApiCall(url string) ([]byte, error) {
 func makeLadderEntries(bytes []byte) ([]LadderEntry, error) {
 	var entry []LadderEntry
 	err := json.Unmarshal(bytes, &entry)
+	if err != nil {
+		prettyPrint(string(bytes))
+	}
 	return entry, err
 }
 
@@ -179,6 +182,7 @@ func populatePage(wg *sync.WaitGroup, page int) {
 
 	entries, err := makeLadderEntries(bytes)
 	if err != nil {
+		log.Println(entries)
 		log.Fatal(err)
 		return
 	}
