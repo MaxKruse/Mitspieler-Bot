@@ -8,11 +8,17 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"net/url"
+	"os"
 	"sync"
+	"time"
 
 	// import gorm
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	// Ratelimit http
+	"go.uber.org/ratelimit"
 )
 
 // structs to decode values into
@@ -25,12 +31,19 @@ type Player struct {
 	gorm.Model
 	Name     string    `json:"name"`
 	Accounts []Account `json:"accounts"`
+	Streamer Streamer
 }
 
 type Account struct {
 	gorm.Model
 	PlayerId     int64  `gorm:",primary_key"`
 	SummonerName string `json:"summoner_name"`
+}
+
+type Streamer struct {
+	gorm.Model
+	Name     string `json:"name"`
+	PlayerId int64
 }
 
 // Riot Specifics
@@ -60,6 +73,10 @@ var (
 	players = flag.Int("players", 50, "Number of players to pull")
 
 	db *gorm.DB
+
+	Streamers []Streamer
+
+	ratelimiter = ratelimit.New(10)
 )
 
 func getLadderUrl(page int) string {
@@ -67,10 +84,11 @@ func getLadderUrl(page int) string {
 }
 
 func getPlayerUrl(player string) string {
-	return fmt.Sprintf(PLAYER_URL, player)
+	return fmt.Sprintf(PLAYER_URL, url.QueryEscape(player))
 }
 
 func makeApiCall(url string) ([]byte, error) {
+	ratelimiter.Take()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -85,13 +103,13 @@ func makeApiCall(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	time.Sleep(1 * time.Second)
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
-
 	return bytes, nil
 }
 
@@ -112,6 +130,42 @@ func prettyPrint(str interface{}) {
 	log.Printf("%s\n", string(strJson))
 }
 
+func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
+	defer wg.Done()
+
+	playerUrl := getPlayerUrl(entry.Name)
+	bytes, err := makeApiCall(playerUrl)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	riotplayer, err := makePlayer(bytes)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	var player Player
+	player.Accounts = riotplayer.LeaguePlayer.Accounts
+	player.Name = riotplayer.Name
+
+	// If player.Name is in Streamers, save
+	for _, streamer := range Streamers {
+		if streamer.Name == player.Name {
+			player.Streamer = streamer
+			break
+		}
+	}
+
+	var local Player
+	db.First(&local, player)
+	// Only create entry if player is not in db
+	if local.ID < 1 {
+		db.Model(&player).Save(&player)
+	}
+}
+
 func populatePage(wg *sync.WaitGroup, page int) {
 	defer wg.Done()
 
@@ -129,30 +183,9 @@ func populatePage(wg *sync.WaitGroup, page int) {
 		return
 	}
 
+	wg.Add(len(entries))
 	for _, entry := range entries {
-		playerUrl := getPlayerUrl(entry.Name)
-		bytes, err := makeApiCall(playerUrl)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		riotplayer, err := makePlayer(bytes)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		var player Player
-		player.Accounts = riotplayer.LeaguePlayer.Accounts
-		player.Name = riotplayer.Name
-
-		var local Player
-		db.First(&local, player)
-		// Only create entry if player is not in db
-		if local.ID < 1 {
-			db.Model(&player).Save(&player)
-		}
+		go savePlayer(wg, entry)
 	}
 }
 
@@ -171,7 +204,21 @@ func main() {
 	}
 
 	// create the tables
-	db.AutoMigrate(Player{}, Account{})
+	db.AutoMigrate(Player{}, Account{}, &Streamer{})
+
+	// Load streamers from json
+	file, err := os.Open("streamers.json")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer file.Close()
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&Streamers)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 
 	// make a go routine for each page index until 5
 	count := int(math.Ceil(float64(*players) / float64(50)))
@@ -180,6 +227,7 @@ func main() {
 	wg.Add(count)
 
 	for i := 1; i <= int(count); i++ {
+		time.Sleep(250 * time.Millisecond)
 		go populatePage(&wg, i)
 
 		// Sleep between 0 and 5 seconds
