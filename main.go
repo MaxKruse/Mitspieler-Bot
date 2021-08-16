@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	// custom imports
 	"github.com/gempir/go-twitch-irc/v2"
@@ -17,6 +18,7 @@ import (
 	"github.com/yuhanfang/riot/constants/region"
 	"github.com/yuhanfang/riot/ratelimit"
 	"github.com/yuhanfang/riot/staticdata"
+	uber "go.uber.org/ratelimit"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -83,6 +85,9 @@ var (
 
 	// list of all champions, used for looking up champion name by id
 	champions *staticdata.ChampionList
+
+	// Rate limiter
+	ratelimiter uber.Limiter
 )
 
 func createDefaults(configPath string) {
@@ -138,9 +143,12 @@ func onConnect() {
 func onMessage(m twitch.PrivateMessage) {
 	if m.Message == "!commands" {
 		twitchClient.Say(m.Channel, "!mitspieler [Spieler/Streamer]")
+		ratelimiter.Take()
 	}
 	// if m.Message starts with "!mitspieler"
 	if strings.HasPrefix(m.Message, "!mitspieler") {
+		prettyPrint(m)
+		ratelimiter.Take()
 		// split the message
 		split := strings.Split(m.Message, " ")
 
@@ -190,15 +198,12 @@ func onMessage(m twitch.PrivateMessage) {
 			celeb := Account{SummonerName: participant.SummonerName}
 			res := Account{}
 
-			log.Println("-------------")
 			db.Model(&Account{}).First(&res, celeb)
-			prettyPrint(res)
 
 			// Some account was associated
 			if res.PlayerId != 0 {
 				temp := Player{}
 				db.Model(&Player{}).First(&temp, res.PlayerId)
-				prettyPrint(temp)
 
 				if temp.Name != "" {
 					// find champion name from list of all champions
@@ -259,6 +264,8 @@ func setupTwitch() {
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
+	ratelimiter = uber.New(5, uber.Per(60*time.Second))
 
 	// flags
 	configPath := flag.String("config", "config.json", "Path to config file")
