@@ -139,8 +139,8 @@ func onMessage(m twitch.PrivateMessage) {
 	if m.Message == "!commands" {
 		twitchClient.Say(m.Channel, "!mitspieler [Spieler/Streamer]")
 	}
-	// if m.Message contains "!test"
-	if strings.Contains(m.Message, "!mitspieler") {
+	// if m.Message starts with "!mitspieler"
+	if strings.HasPrefix(m.Message, "!mitspieler") {
 		// split the message
 		split := strings.Split(m.Message, " ")
 
@@ -157,7 +157,6 @@ func onMessage(m twitch.PrivateMessage) {
 		summoner, err := riotClient.GetBySummonerName(ctx, region.EUW1, streamerName)
 		if err != nil {
 			log.Println("GetBySummonerName:", err)
-			twitchClient.Say(m.Channel, fmt.Sprintf("Riot API Fehler: GetBySummonerName", streamerName, ":("))
 			return
 		}
 
