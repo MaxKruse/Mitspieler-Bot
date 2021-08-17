@@ -9,15 +9,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"sort"
 	"strings"
 	"time"
 
 	// custom imports
 	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/maxkruse/Mitspieler-Bot/client/commands"
 	"github.com/yuhanfang/riot/apiclient"
 	"github.com/yuhanfang/riot/constants/language"
-	"github.com/yuhanfang/riot/constants/region"
 	"github.com/yuhanfang/riot/ratelimit"
 	"github.com/yuhanfang/riot/staticdata"
 	uber "go.uber.org/ratelimit"
@@ -36,33 +35,6 @@ type Config struct {
 	DB_PORT         string
 	DB_USER         string
 	DB_PASS         string
-}
-
-type IngamePlayer struct {
-	Name         string
-	Champion     string
-	Team         bool
-	LeaguePoints int
-}
-
-// Database Specifics
-type Player struct {
-	gorm.Model
-	Name     string    `json:"name"`
-	Accounts []Account `json:"accounts"`
-	Streamer Streamer
-}
-
-type Account struct {
-	gorm.Model
-	PlayerId     int64  `gorm:",primary_key"`
-	SummonerName string `json:"summoner_name"`
-}
-
-type Streamer struct {
-	gorm.Model
-	Name     string `json:"name"`
-	PlayerId int64
 }
 
 // Custom errors
@@ -161,113 +133,11 @@ func onMessage(m twitch.PrivateMessage) {
 	}
 	// if m.Message starts with "!mitspieler"
 	if strings.HasPrefix(m.Message, "!mitspieler") {
-		prettyPrint(m)
-		ratelimiter.Take()
-		// split the message
-		split := strings.Split(m.Message, " ")
 
-		// If no arg was provided, search for the channel name
-		var arguments []string
-		if len(split) == 1 {
-			arguments = append(arguments, m.Channel)
-		} else {
-			// get all values after first word
-			arguments = split[1:]
-		}
-		streamerName := strings.Join(arguments, " ")
-
-		summoner, err := riotClient.GetBySummonerName(ctx, region.EUW1, streamerName)
-		if err != nil {
-			log.Println("GetBySummonerName:", err)
-			return
-		}
-
-		// get current game
-		activeGame, err := riotClient.GetCurrentGameInfoBySummoner(ctx, region.EUW1, summoner.ID)
-		if err != nil {
-			log.Println("GetCurrentGameInfoBySummoner:", err)
-			twitchClient.Say(m.Channel, fmt.Sprintf("%s scheint in keinen Game zu sein.", streamerName))
-			return
-		}
-
-		// iterate through all champions in the game and print their champion name
-		var players []IngamePlayer
-
-		var myTeamId int64
-
-		for _, player := range activeGame.Participants {
-			if player.SummonerName == summoner.Name {
-				myTeamId = player.TeamId
-			}
-		}
-
-		for _, participant := range activeGame.Participants {
-			//champion, err := riotClient.GetChampionByID(ctx, region.EUW1, champion.Champion(participant.ChampionId))
-			if err != nil {
-				log.Println("GetChampionByID:", err)
-				return
-			}
-
-			var champName string
-
-			for _, champ := range champions.Data {
-				if champ.Key == fmt.Sprint(participant.ChampionId) {
-					champName = champ.Name
-					break
-				}
-			}
-
-			celeb := Account{SummonerName: participant.SummonerName}
-			res := Account{}
-
-			db.Model(&Account{}).First(&res, celeb)
-
-			// Some account was associated
-			if res.PlayerId != 0 {
-				temp := Player{}
-				db.Model(&Player{}).First(&temp, res.PlayerId)
-
-				encryptedSummonerId := participant.SummonerId
-				res, _ := riotClient.GetAllLeaguePositionsForSummoner(ctx, region.EUW1, encryptedSummonerId)
-
-				var leaguePos apiclient.LeaguePosition
-				for _, pos := range res {
-					if pos.QueueType == "RANKED_SOLO_5x5" {
-						leaguePos = pos
-						break
-					}
-				}
-
-				if temp.Name != "" {
-					players = append(players, IngamePlayer{Name: temp.Name, Champion: champName, Team: myTeamId == participant.TeamId, LeaguePoints: leaguePos.LeaguePoints})
-				}
-			}
-		}
-
-		if len(players) == 0 {
-			return
-		}
-
-		// sort players by champion name
-		sort.Slice(players, func(i, j int) bool {
-			return players[i].LeaguePoints > players[j].LeaguePoints
-		})
-
-		// Turn players into string
-		playersStringMyTeam := fmt.Sprintf("%s's Team: ", streamerName)
-		playersStringEnemyTeam := "Gegner: "
-		var myTeamPlayers []string
-		var enemyTeamPlayers []string
-		for _, player := range players {
-			s := fmt.Sprintf("%s (%s) %d LP", player.Name, player.Champion, player.LeaguePoints)
-			if player.Team {
-				myTeamPlayers = append(myTeamPlayers, s)
-			} else {
-				enemyTeamPlayers = append(enemyTeamPlayers, s)
-			}
-		}
-
-		twitchClient.Say(m.Channel, playersStringMyTeam+strings.Join(myTeamPlayers, ", ")+" | "+playersStringEnemyTeam+strings.Join(enemyTeamPlayers, ", "))
+		// make new mitspielercommand
+		command := commands.NewMitspielerCommand(twitchClient, riotClient, champions, m, db, ratelimiter)
+		// Run command non-blocking
+		go command.Run()
 	}
 }
 
