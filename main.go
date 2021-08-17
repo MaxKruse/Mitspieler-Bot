@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -35,6 +36,13 @@ type Config struct {
 	DB_PORT         string
 	DB_USER         string
 	DB_PASS         string
+}
+
+type IngamePlayer struct {
+	Name         string
+	Champion     string
+	Team         bool
+	LeaguePoints int
 }
 
 // Database Specifics
@@ -183,7 +191,15 @@ func onMessage(m twitch.PrivateMessage) {
 		}
 
 		// iterate through all champions in the game and print their champion name
-		var playerChamps []string
+		var players []IngamePlayer
+
+		var myTeamId int64
+
+		for _, player := range activeGame.Participants {
+			if player.SummonerName == summoner.Name {
+				myTeamId = player.TeamId
+			}
+		}
 
 		for _, participant := range activeGame.Participants {
 			//champion, err := riotClient.GetChampionByID(ctx, region.EUW1, champion.Champion(participant.ChampionId))
@@ -211,18 +227,47 @@ func onMessage(m twitch.PrivateMessage) {
 				temp := Player{}
 				db.Model(&Player{}).First(&temp, res.PlayerId)
 
+				encryptedSummonerId := participant.SummonerId
+				res, _ := riotClient.GetAllLeaguePositionsForSummoner(ctx, region.EUW1, encryptedSummonerId)
+
+				var leaguePos apiclient.LeaguePosition
+				for _, pos := range res {
+					if pos.QueueType == "RANKED_SOLO_5x5" {
+						leaguePos = pos
+						break
+					}
+				}
+
 				if temp.Name != "" {
-					// find champion name from list of all champions
-					playerChamps = append(playerChamps, fmt.Sprintf("%s (%s)", temp.Name, champName))
+					players = append(players, IngamePlayer{Name: temp.Name, Champion: champName, Team: myTeamId == participant.TeamId, LeaguePoints: leaguePos.LeaguePoints})
 				}
 			}
 		}
 
-		if len(playerChamps) == 0 {
+		if len(players) == 0 {
 			return
 		}
 
-		twitchClient.Say(m.Channel, "Mitspieler: "+strings.Join(playerChamps, ", "))
+		// sort players by champion name
+		sort.Slice(players, func(i, j int) bool {
+			return players[i].LeaguePoints > players[j].LeaguePoints
+		})
+
+		// Turn players into string
+		playersStringMyTeam := fmt.Sprintf("%s's Team: ", streamerName)
+		playersStringEnemyTeam := "Gegner: "
+		var myTeamPlayers []string
+		var enemyTeamPlayers []string
+		for _, player := range players {
+			s := fmt.Sprintf("%s (%s) %d LP", player.Name, player.Champion, player.LeaguePoints)
+			if player.Team {
+				myTeamPlayers = append(myTeamPlayers, s)
+			} else {
+				enemyTeamPlayers = append(enemyTeamPlayers, s)
+			}
+		}
+
+		twitchClient.Say(m.Channel, playersStringMyTeam+strings.Join(myTeamPlayers, ", ")+" | "+playersStringEnemyTeam+strings.Join(enemyTeamPlayers, ", "))
 	}
 }
 
@@ -270,12 +315,12 @@ func setupTwitch() {
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	logfile, err := os.OpenFile("server.log", os.O_APPEND|os.O_CREATE, 0666)
+	logfile, err := os.OpenFile("server.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
-	multiwriter := io.MultiWriter(os.Stdout, logfile)
-	log.SetOutput(multiwriter)
+	multi := io.MultiWriter(logfile, os.Stdout)
+	log.SetOutput(multi)
 	log.Println("Starting server...")
 	defer logfile.Close()
 
