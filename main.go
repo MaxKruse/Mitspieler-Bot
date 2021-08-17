@@ -142,6 +142,11 @@ func onConnect() {
 }
 
 func onMessage(m twitch.PrivateMessage) {
+	// ignore messages from self
+	if m.User.Name == config.TWITCH_USERNAME {
+		return
+	}
+
 	if m.Message == "!commands" {
 		twitchClient.Say(m.Channel, "!mitspieler [Spieler/Streamer]")
 		ratelimiter.Take()
