@@ -26,15 +26,15 @@ type MitspielerCommand struct {
 	limiter      uber.Limiter
 }
 
-func NewMitspielerCommand(twitchClient *twitch.Client, riotClient apiclient.Client, champions *staticdata.ChampionList, message twitch.PrivateMessage, db *gorm.DB, rateLimiter uber.Limiter) MitspielerCommand {
+func NewMitspielerCommand(twitchClient *twitch.Client, riotClient *apiclient.Client, champions *staticdata.ChampionList, message *twitch.PrivateMessage, db *gorm.DB, rateLimiter *uber.Limiter) MitspielerCommand {
 	return MitspielerCommand{
 		ctx:          context.Background(),
-		riotClient:   riotClient,
+		riotClient:   *riotClient,
 		champions:    champions,
 		twitchClient: twitchClient,
-		message:      message,
+		message:      *message,
 		db:           db,
-		limiter:      rateLimiter,
+		limiter:      *rateLimiter,
 	}
 }
 
@@ -67,6 +67,8 @@ func (m *MitspielerCommand) Run() {
 	}
 
 	m.limiter.Take()
+	// Save command to db
+	m.db.Create(&structs.CommandLog{Requester: m.message.User.DisplayName, Command: m.message.Message, Channel: m.message.Channel})
 
 	// iterate through all champions in the game and print their champion name
 	var players []structs.IngamePlayer

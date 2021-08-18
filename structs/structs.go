@@ -29,3 +29,10 @@ type IngamePlayer struct {
 	Team         bool
 	LeaguePoints int
 }
+
+type CommandLog struct {
+	gorm.Model
+	Command   string
+	Requester string
+	Channel   string
+}

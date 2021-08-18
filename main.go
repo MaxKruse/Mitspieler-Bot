@@ -15,6 +15,7 @@ import (
 	// custom imports
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/maxkruse/Mitspieler-Bot/client/commands"
+	"github.com/maxkruse/Mitspieler-Bot/client/structs"
 	"github.com/yuhanfang/riot/apiclient"
 	"github.com/yuhanfang/riot/constants/language"
 	"github.com/yuhanfang/riot/ratelimit"
@@ -135,7 +136,7 @@ func onMessage(m twitch.PrivateMessage) {
 	if strings.HasPrefix(m.Message, "!mitspieler") {
 
 		// make new mitspielercommand
-		command := commands.NewMitspielerCommand(twitchClient, riotClient, champions, m, db, ratelimiter)
+		command := commands.NewMitspielerCommand(twitchClient, &riotClient, champions, &m, db, &ratelimiter)
 		// Run command non-blocking
 		go command.Run()
 	}
@@ -222,6 +223,7 @@ func main() {
 		return
 	}
 	log.Println("Connected to database")
+	db.AutoMigrate(&structs.CommandLog{})
 
 	go setupRiot()
 	go setupTwitch()
