@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -82,7 +83,7 @@ func getLadderUrl(page int) string {
 }
 
 func getPlayerUrl(player string) string {
-	return fmt.Sprintf(PLAYER_URL, url.QueryEscape(player))
+	return fmt.Sprintf(PLAYER_URL, url.QueryEscape(strings.ReplaceAll(player, " ", "-")))
 }
 
 func makeApiCall(url string) ([]byte, error) {
