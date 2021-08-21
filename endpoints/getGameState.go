@@ -92,7 +92,7 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 			}
 
 			if temp.Name != "" {
-				players = append(players, structs.IngamePlayer{Name: temp.Name, Champion: champName, Team: myTeamId == participant.TeamId, LeaguePoints: leaguePos.LeaguePoints})
+				players = append(players, structs.IngamePlayer{Name: temp.Name, Champion: champName, Team: myTeamId == participant.TeamId, LeaguePoints: leaguePos.LeaguePoints, Position: temp.Position})
 			}
 		}
 	}

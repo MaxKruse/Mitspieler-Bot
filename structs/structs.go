@@ -30,6 +30,7 @@ type IngamePlayer struct {
 	Name         string
 	Champion     string
 	Team         bool
+	Position     string
 	LeaguePoints int
 }
 
