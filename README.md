@@ -10,11 +10,13 @@ Then run it
 
 > ./my_cool_bot --help
 
-## Todo
+## Usage
 
-1. Build Database of lolpro players (endpoint: <https://api.lolpros.gg/es/ladder?page=1&sort=rank&order=desc>)
-2. Associate Twitch Channel name with Player Aliases (endpoint: <https://api.lolpros.gg/es/players/player_name>)
-3. Only print out relevant player names
+This bot supports Nightbot.
+
+Add a command with the following syntax:
+
+`$(urlfetch http://<bot-url>/streamer/$(channel))`
 
 ## Credits
 
