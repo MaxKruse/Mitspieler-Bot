@@ -265,6 +265,8 @@ func main() {
 			}
 			if player.ID > 0 {
 				log.Printf("%s is in the db", streamer.Name)
+				var temp structs.Streamer
+				db.First(&temp, streamer)
 				streamer.PlayerId = int64(player.ID)
 				db.Save(&streamer)
 			}
