@@ -52,8 +52,7 @@ const (
 )
 
 var (
-	players       = flag.Int("players", 50, "Number of players to pull")
-	saveStreamers = flag.Bool("save-streamers", false, "Save streamers to db")
+	players = flag.Int("players", 50, "Number of players to pull")
 
 	db *gorm.DB
 
@@ -226,50 +225,29 @@ func main() {
 		return
 	}
 
-	if !*saveStreamers {
+	// make a go routine for each page index until 5
+	count := int(math.Ceil(float64(*players) / float64(50)))
 
-		// make a go routine for each page index until 5
-		count := int(math.Ceil(float64(*players) / float64(50)))
+	var wg sync.WaitGroup
+	wg.Add(count)
 
-		var wg sync.WaitGroup
-		wg.Add(count)
+	for i := 1; i <= int(count); i++ {
+		time.Sleep(250 * time.Millisecond)
+		go populatePage(&wg, i)
 
-		for i := 1; i <= int(count); i++ {
-			time.Sleep(250 * time.Millisecond)
-			go populatePage(&wg, i)
+		// Sleep between 0 and 5 seconds
 
-			// Sleep between 0 and 5 seconds
+		// Example code
+		// p := &Player{
+		// 	Name: "Agurin",
+		// 	Accounts: []Account{
+		// 		{SummonerName: "Agurin"},
+		// 		{SummonerName: "Charlie Heaton"},
+		// 	},
+		// }
+		// db.Model(Player{}).FirstOrCreate(p)
 
-			// Example code
-			// p := &Player{
-			// 	Name: "Agurin",
-			// 	Accounts: []Account{
-			// 		{SummonerName: "Agurin"},
-			// 		{SummonerName: "Charlie Heaton"},
-			// 	},
-			// }
-			// db.Model(Player{}).FirstOrCreate(p)
-
-		}
-
-		wg.Wait()
-
-	} else {
-		// Check for all streamers if the player is in the db
-		for _, streamer := range Streamers {
-			var player structs.Player
-			db.Model(&structs.Player{}).Where("name = ?", streamer.Name).First(&player)
-			if err != nil {
-				log.Fatal(err)
-				return
-			}
-			if player.ID > 0 {
-				log.Printf("%s is in the db", streamer.Name)
-				var temp structs.Streamer
-				db.First(&temp, streamer)
-				streamer.PlayerId = int64(player.ID)
-				db.Save(&streamer)
-			}
-		}
 	}
+
+	wg.Wait()
 }
