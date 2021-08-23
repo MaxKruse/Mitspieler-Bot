@@ -52,8 +52,8 @@ const (
 )
 
 var (
-	players       = flag.Int("-players", 50, "Number of players to pull")
-	saveStreamers = flag.Bool("-save-streamers", false, "Save streamers to db")
+	players       = flag.Int("players", 50, "Number of players to pull")
+	saveStreamers = flag.Bool("save-streamers", false, "Save streamers to db")
 
 	db *gorm.DB
 
@@ -226,7 +226,7 @@ func main() {
 		return
 	}
 
-	if *saveStreamers {
+	if !*saveStreamers {
 
 		// make a go routine for each page index until 5
 		count := int(math.Ceil(float64(*players) / float64(50)))
