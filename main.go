@@ -57,15 +57,6 @@ var (
 
 	// bg context
 	ctx = context.Background()
-
-	// Database
-	db *gorm.DB
-
-	// riot api client
-	riotClient apiclient.Client
-
-	// list of all champions, used for looking up champion name by id
-	champions *staticdata.ChampionList
 )
 
 func createDefaults(configPath string) {
@@ -74,6 +65,11 @@ func createDefaults(configPath string) {
 		TWITCH_OAUTH:    "oauth:your_oauth_here",
 		RIOT_API_KEY:    "",
 		TWITCH_CHANNELS: []string{},
+		PORT:            5000,
+		DB_HOST:         "localhost",
+		DB_PORT:         "5432",
+		DB_USER:         "postgres",
+		DB_PASS:         "postgres",
 	}
 
 	configStr, err := json.MarshalIndent(config, "", "  ")
@@ -185,6 +181,15 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/streamer/:streamerName", endpoints.GetGameState)
+	app.Get("/reload/config", func(c *fiber.Ctx) error {
+		err = loadConfig(*configPath)
+
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		setupRiot()
+		return nil
+	})
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", config.PORT)))
 }
