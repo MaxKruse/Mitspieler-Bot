@@ -14,6 +14,7 @@ import (
 	// custom imports
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/maxkruse/Mitspieler-Bot/client/endpoints"
 	"github.com/maxkruse/Mitspieler-Bot/client/globals"
 	"github.com/maxkruse/Mitspieler-Bot/client/structs"
@@ -38,6 +39,7 @@ type Config struct {
 	DB_PORT         string
 	DB_USER         string
 	DB_PASS         string
+	USERS           map[string]string
 }
 
 // Custom errors
@@ -70,6 +72,7 @@ func createDefaults(configPath string) {
 		DB_PORT:         "5432",
 		DB_USER:         "postgres",
 		DB_PASS:         "postgres",
+		USERS:           map[string]string{},
 	}
 
 	configStr, err := json.MarshalIndent(config, "", "  ")
@@ -181,6 +184,9 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/streamer/:streamerName", endpoints.GetGameState)
+	app.Use("/reload/config", basicauth.New(basicauth.Config{
+		Users: config.USERS,
+	}))
 	app.Get("/reload/config", func(c *fiber.Ctx) error {
 		err = loadConfig(*configPath)
 
