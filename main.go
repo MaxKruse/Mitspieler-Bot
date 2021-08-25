@@ -188,7 +188,7 @@ func main() {
 			log.Fatal(err.Error())
 		}
 		setupRiot()
-		return nil
+		return c.Status(202).SendString("Reloaded config")
 	})
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", config.PORT)))
