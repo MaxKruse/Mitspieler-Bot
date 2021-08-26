@@ -9,12 +9,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	// custom imports
-	"github.com/gempir/go-twitch-irc/v2"
-	"github.com/maxkruse/Mitspieler-Bot/client/commands"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/maxkruse/Mitspieler-Bot/client/endpoints"
+	"github.com/maxkruse/Mitspieler-Bot/client/globals"
 	"github.com/maxkruse/Mitspieler-Bot/client/structs"
 	"github.com/yuhanfang/riot/apiclient"
 	"github.com/yuhanfang/riot/constants/language"
@@ -31,18 +33,20 @@ type Config struct {
 	TWITCH_USERNAME string
 	TWITCH_OAUTH    string
 	RIOT_API_KEY    string
+	PORT            int
 	TWITCH_CHANNELS []string
 	DB_HOST         string
 	DB_PORT         string
 	DB_USER         string
 	DB_PASS         string
+	USERS           map[string]string
 }
 
 // Custom errors
 type ConfigError struct{}
 
 func (e *ConfigError) Error() string {
-	return "Default Config Created, please update it."
+	return "Please use the above in your config file"
 }
 
 const (
@@ -55,21 +59,6 @@ var (
 
 	// bg context
 	ctx = context.Background()
-
-	// Database
-	db *gorm.DB
-
-	// riot api client
-	riotClient apiclient.Client
-
-	// twitch client
-	twitchClient *twitch.Client
-
-	// list of all champions, used for looking up champion name by id
-	champions *staticdata.ChampionList
-
-	// Rate limiter
-	ratelimiter uber.Limiter
 )
 
 func createDefaults(configPath string) {
@@ -78,6 +67,12 @@ func createDefaults(configPath string) {
 		TWITCH_OAUTH:    "oauth:your_oauth_here",
 		RIOT_API_KEY:    "",
 		TWITCH_CHANNELS: []string{},
+		PORT:            5000,
+		DB_HOST:         "localhost",
+		DB_PORT:         "5432",
+		DB_USER:         "postgres",
+		DB_PASS:         "postgres",
+		USERS:           map[string]string{},
 	}
 
 	configStr, err := json.MarshalIndent(config, "", "  ")
@@ -85,7 +80,7 @@ func createDefaults(configPath string) {
 		log.Fatal(err)
 	}
 
-	os.WriteFile(configPath, configStr, 0644)
+	fmt.Println(string(configStr))
 }
 
 func loadConfig(configPath string) error {
@@ -117,37 +112,12 @@ func prettyPrint(str interface{}) {
 	log.Printf("%s\n", string(strJson))
 }
 
-// onConnect is called when the client connects to the server
-func onConnect() {
-	log.Println("Connected to twitch")
-}
-
-func onMessage(m twitch.PrivateMessage) {
-	// ignore messages from self
-	if m.User.Name == config.TWITCH_USERNAME {
-		return
-	}
-
-	if m.Message == "!commands" {
-		twitchClient.Say(m.Channel, "!mitspieler [Spieler/Streamer]")
-		ratelimiter.Take()
-	}
-	// if m.Message starts with "!mitspieler"
-	if strings.HasPrefix(m.Message, "!mitspieler") {
-
-		// make new mitspielercommand
-		command := commands.NewMitspielerCommand(twitchClient, &riotClient, champions, &m, db, &ratelimiter)
-		// Run command non-blocking
-		go command.Run()
-	}
-}
-
 func setupRiot() {
 	// make riot api client
 	log.Println("Connecting to Riot API...")
 	httpClient := http.DefaultClient
 	limiter := ratelimit.NewLimiter()
-	riotClient = apiclient.New(config.RIOT_API_KEY, httpClient, limiter)
+	globals.RiotClient = apiclient.New(config.RIOT_API_KEY, httpClient, limiter)
 
 	staticdataClient := staticdata.New(http.DefaultClient)
 	versions, err := staticdataClient.Versions(ctx)
@@ -156,31 +126,10 @@ func setupRiot() {
 		return
 	}
 
-	champions, err = staticdataClient.Champions(ctx, versions[0], language.EnglishUnitedStates)
+	globals.Champions, err = staticdataClient.Champions(ctx, versions[0], language.EnglishUnitedStates)
 	if err != nil {
 		log.Println("Error getting champions:", err)
 		return
-	}
-}
-
-func setupTwitch() {
-	// create a new client
-	twitchClient = twitch.NewClient(config.TWITCH_USERNAME, config.TWITCH_OAUTH)
-
-	// Set "On" event handlers
-	twitchClient.OnConnect(onConnect)
-	twitchClient.OnPrivateMessage(onMessage)
-
-	// Join channels
-	log.Println("Joining channels:", config.TWITCH_CHANNELS)
-	twitchClient.Join(config.TWITCH_CHANNELS...)
-	defer twitchClient.Disconnect()
-
-	// Connect to twitch
-	log.Println("Connecting to twitch...")
-	err := twitchClient.Connect()
-	if err != nil {
-		log.Fatal(err)
 	}
 }
 
@@ -195,7 +144,7 @@ func main() {
 	log.Println("Starting server...")
 	defer logfile.Close()
 
-	ratelimiter = uber.New(5, uber.Per(60*time.Second))
+	globals.Ratelimiter = uber.New(5, uber.Per(60*time.Second))
 
 	// flags
 	configPath := flag.String("config", "config.json", "Path to config file")
@@ -217,18 +166,36 @@ func main() {
 	err = error(nil)
 	log.Println("Connecting to database:")
 	prettyPrint(dsn)
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	globals.DBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+
 	log.Println("Connected to database")
-	db.AutoMigrate(&structs.CommandLog{})
+	globals.DBConn.AutoMigrate(&structs.CommandLog{})
 
-	go setupRiot()
-	go setupTwitch()
+	setupRiot()
 
-	// wait for CTRL+C
-	select {}
+	// Setup global context
+	globals.BGContext = context.Background()
 
+	// Development hot reload
+	app := fiber.New()
+
+	app.Get("/streamer/:streamerName", endpoints.GetGameState)
+	app.Use("/reload/config", basicauth.New(basicauth.Config{
+		Users: config.USERS,
+	}))
+	app.Get("/reload/config", func(c *fiber.Ctx) error {
+		err = loadConfig(*configPath)
+
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		setupRiot()
+		return c.Status(202).SendString("Reloaded config")
+	})
+
+	log.Fatal(app.Listen(fmt.Sprintf(":%d", config.PORT)))
 }

@@ -4,9 +4,11 @@ import (
 	"gorm.io/gorm"
 )
 
+// Database Specifics
 type Player struct {
 	gorm.Model
 	Name     string    `json:"name"`
+	Position string    `json:"position"`
 	Accounts []Account `json:"accounts"`
 	Streamer Streamer
 }
@@ -19,14 +21,16 @@ type Account struct {
 
 type Streamer struct {
 	gorm.Model
-	Name     string `json:"name"`
-	PlayerId int64
+	Name         string `json:"name"`
+	StreamerName string `json:"streamer_name"`
+	PlayerId     int64
 }
 
 type IngamePlayer struct {
 	Name         string
 	Champion     string
 	Team         bool
+	Position     string
 	LeaguePoints int
 }
 

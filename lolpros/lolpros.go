@@ -16,6 +16,7 @@ import (
 	"time"
 
 	// import gorm
+	"github.com/maxkruse/Mitspieler-Bot/client/structs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -28,26 +29,6 @@ type LadderEntry struct {
 	Name string `json:"name"`
 }
 
-// Database Specifics
-type Player struct {
-	gorm.Model
-	Name     string    `json:"name"`
-	Accounts []Account `json:"accounts"`
-	Streamer Streamer
-}
-
-type Account struct {
-	gorm.Model
-	PlayerId     int64  `gorm:",primary_key"`
-	SummonerName string `json:"summoner_name"`
-}
-
-type Streamer struct {
-	gorm.Model
-	Name     string `json:"name"`
-	PlayerId int64
-}
-
 // Riot Specifics
 type RiotPlayer struct {
 	LeaguePlayer `json:"league_player"`
@@ -55,7 +36,8 @@ type RiotPlayer struct {
 }
 
 type LeaguePlayer struct {
-	Accounts []Account `json:"accounts"`
+	Position string            `json:"position"`
+	Accounts []structs.Account `json:"accounts"`
 }
 
 const (
@@ -74,7 +56,7 @@ var (
 
 	db *gorm.DB
 
-	Streamers []Streamer
+	Streamers []structs.Streamer
 
 	ratelimiter = ratelimit.New(2)
 )
@@ -151,19 +133,28 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 		return
 	}
 
-	var player Player
+	var player structs.Player
 	player.Accounts = riotplayer.LeaguePlayer.Accounts
+
+	// cut first 3 characters from position
+	if len(riotplayer.LeaguePlayer.Position) > 3 {
+		player.Position = riotplayer.LeaguePlayer.Position[3:]
+		// uppercase first letter
+		player.Position = strings.ToUpper(player.Position[:1]) + player.Position[1:]
+	}
+
 	player.Name = riotplayer.Name
 
 	// If player.Name is in Streamers, save
 	for _, streamer := range Streamers {
 		if streamer.Name == player.Name {
 			player.Streamer = streamer
+			prettyPrint(player)
 			break
 		}
 	}
 
-	var local Player
+	var local structs.Player
 	db.First(&local, player)
 	// Only create entry if player is not in db
 	if local.ID < 1 {
@@ -218,7 +209,7 @@ func main() {
 	}
 
 	// create the tables
-	db.AutoMigrate(Player{}, Account{}, &Streamer{})
+	db.AutoMigrate(structs.Player{}, structs.Account{}, structs.Streamer{})
 
 	// Load streamers from json
 	file, err := os.Open("streamers.json")
