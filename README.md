@@ -1,3 +1,5 @@
+[![Go](https://github.com/MaxKruse/Mitspieler-Bot/actions/workflows/go.yml/badge.svg?branch=master)](https://github.com/MaxKruse/Mitspieler-Bot/actions/workflows/go.yml)
+
 # Mitspieler Bot
 
 This project contains a Twitch.tv chatbot, which aims at providing the `!mitspieler` or `!teammates` commands for League of Legends players.
