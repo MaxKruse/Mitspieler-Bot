@@ -26,7 +26,7 @@ import (
 
 // structs to decode values into
 type LadderEntry struct {
-	Name string `json:"name"`
+	Name string `json:"slug"`
 }
 
 // Riot Specifics
@@ -66,7 +66,7 @@ func getLadderUrl(page int) string {
 }
 
 func getPlayerUrl(player string) string {
-	return fmt.Sprintf(PLAYER_URL, url.QueryEscape(strings.ReplaceAll(player, " ", "-")))
+	return fmt.Sprintf(PLAYER_URL, url.QueryEscape(player))
 }
 
 func makeApiCall(url string) ([]byte, error) {
