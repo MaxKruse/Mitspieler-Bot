@@ -86,7 +86,8 @@ func makeApiCall(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	time.Sleep(1 * time.Second)
+	
+	log.Println("Requested:", url)
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
