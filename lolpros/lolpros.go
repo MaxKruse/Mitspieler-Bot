@@ -160,6 +160,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	// Only create entry if player is not in db
 	if local.ID < 1 {
 		db.Model(&player).Save(&player)
+		log.Println("Saved", player)
 	}
 }
 
