@@ -9,4 +9,17 @@ services:
       POSTGRES_DB: lolpros
 
     ports: 
-    - "5432:5432"
+     - "5432:5432"
+
+  app:
+    restart: unless-stopped
+    build: .
+
+    ports: 
+     - "80:5000"
+
+    volumes: 
+     - .:/app
+
+    depends_on:
+     - db

@@ -4134,3 +4134,794 @@
     "PlayerId": 0
   }
 }
+2021/08/23 11:30:48.671524 Starting server...
+2021/08/23 11:30:54.439835 Starting server...
+2021/08/23 11:30:54.440633 failed to connect to `host=localhost user=postgres database=lolpros`: dial error (dial tcp 127.0.0.1:5432: connect: connection refused)
+2021/08/23 11:30:57.729375 Starting server...
+2021/08/23 11:30:57.730140 failed to connect to `host=localhost user=postgres database=lolpros`: dial error (dial tcp 127.0.0.1:5432: connect: connection refused)
+2021/08/23 11:31:10.432963 Starting server...
+2021/08/23 11:31:16.791162 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "Agurin",
+  "position": "Jungle",
+  "accounts": [
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Agurin"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Charlie Heaton"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "P0ST LEEMONT"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "Agurin",
+    "streamer_name": "Agurin",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:31:23.036915 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "Noway",
+  "position": "Mid",
+  "accounts": [
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "noway2u"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "NoELO4uSir"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Fillanthropist"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Don Noway"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "ESG Mid"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "ESG Noway4u"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Potato4u"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "Noway",
+    "streamer_name": "Noway4u_Sir",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:31:26.630248 Starting server...
+2021/08/23 11:31:38.446674 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "Agurin",
+  "position": "Jungle",
+  "accounts": [
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Agurin"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Charlie Heaton"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "P0ST LEEMONT"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "Agurin",
+    "streamer_name": "Agurin",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:31:44.803988 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "Noway",
+  "position": "Mid",
+  "accounts": [
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "noway2u"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "NoELO4uSir"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Fillanthropist"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Don Noway"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "ESG Mid"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "ESG Noway4u"
+    },
+    {
+      "ID": 0,
+      "CreatedAt": "0001-01-01T00:00:00Z",
+      "UpdatedAt": "0001-01-01T00:00:00Z",
+      "DeletedAt": null,
+      "PlayerId": 0,
+      "summoner_name": "Potato4u"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "Noway",
+    "streamer_name": "Noway4u_Sir",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:32:09.669602 Starting server...
+2021/08/23 11:32:09.713125 Agurin is in the db
+2021/08/23 11:32:09.720216 Noway is in the db
+2021/08/23 11:33:58.134377 Starting server...
+2021/08/23 11:33:58.180081 Agurin is in the db
+2021/08/23 11:33:58.183412 Noway is in the db
+2021/08/23 11:34:17.138219 Starting server...
+2021/08/23 11:34:17.185727 Agurin is in the db
+2021/08/23 11:34:17.189935 Noway is in the db
+2021/08/23 11:34:17.192818 Autophil is in the db
+2021/08/23 11:37:25.826937 Starting server...
+2021/08/23 11:37:25.876904 {
+  "ID": 33,
+  "CreatedAt": "2021-08-16T13:07:07.472926+02:00",
+  "UpdatedAt": "2021-08-16T13:07:07.472926+02:00",
+  "DeletedAt": null,
+  "name": "Agurin",
+  "position": "",
+  "accounts": null,
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:37:25.876966 Agurin is in the db
+2021/08/23 11:37:25.886887 {
+  "ID": 21,
+  "CreatedAt": "2021-08-16T13:07:04.643409+02:00",
+  "UpdatedAt": "2021-08-16T13:07:04.643409+02:00",
+  "DeletedAt": null,
+  "name": "Noway",
+  "position": "",
+  "accounts": null,
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:37:25.886955 Noway is in the db
+2021/08/23 11:37:25.889633 {
+  "ID": 175,
+  "CreatedAt": "2021-08-16T13:07:31.987847+02:00",
+  "UpdatedAt": "2021-08-16T13:07:31.987847+02:00",
+  "DeletedAt": null,
+  "name": "Autophil",
+  "position": "",
+  "accounts": null,
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:37:25.889672 Autophil is in the db
+2021/08/23 11:37:43.827567 Starting server...
+2021/08/23 11:37:43.878792 {
+  "ID": 33,
+  "CreatedAt": "2021-08-16T13:07:07.472926+02:00",
+  "UpdatedAt": "2021-08-16T13:07:07.472926+02:00",
+  "DeletedAt": null,
+  "name": "Agurin",
+  "position": "",
+  "accounts": [
+    {
+      "ID": 114,
+      "CreatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "UpdatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "DeletedAt": null,
+      "PlayerId": 33,
+      "summoner_name": "Agurin"
+    },
+    {
+      "ID": 115,
+      "CreatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "UpdatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "DeletedAt": null,
+      "PlayerId": 33,
+      "summoner_name": "Charlie Heaton"
+    },
+    {
+      "ID": 116,
+      "CreatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "UpdatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "DeletedAt": null,
+      "PlayerId": 33,
+      "summoner_name": "P0ST LEEMONT"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:37:43.878935 Agurin is in the db
+2021/08/23 11:37:43.882939 {
+  "ID": 21,
+  "CreatedAt": "2021-08-16T13:07:04.643409+02:00",
+  "UpdatedAt": "2021-08-16T13:07:04.643409+02:00",
+  "DeletedAt": null,
+  "name": "Noway",
+  "position": "",
+  "accounts": [
+    {
+      "ID": 77,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "noway2u"
+    },
+    {
+      "ID": 78,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "NoELO4uSir"
+    },
+    {
+      "ID": 79,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "Fillanthropist"
+    },
+    {
+      "ID": 80,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "Don Noway"
+    },
+    {
+      "ID": 81,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "ESG Mid"
+    },
+    {
+      "ID": 82,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "ESG Noway4u"
+    },
+    {
+      "ID": 83,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "Potato4u"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:37:43.883031 Noway is in the db
+2021/08/23 11:37:43.886129 {
+  "ID": 175,
+  "CreatedAt": "2021-08-16T13:07:31.987847+02:00",
+  "UpdatedAt": "2021-08-16T13:07:31.987847+02:00",
+  "DeletedAt": null,
+  "name": "Autophil",
+  "position": "",
+  "accounts": [
+    {
+      "ID": 498,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "TEAM Autophil"
+    },
+    {
+      "ID": 499,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "NoPhilter"
+    },
+    {
+      "ID": 500,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Aram4President"
+    },
+    {
+      "ID": 501,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Lückenphiller"
+    },
+    {
+      "ID": 502,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Philly Weakside"
+    },
+    {
+      "ID": 503,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Leeonard Davinci"
+    },
+    {
+      "ID": 504,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Blitzy Philside"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:37:43.886239 Autophil is in the db
+2021/08/23 11:38:30.098008 Starting server...
+2021/08/23 11:38:30.139924 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "",
+  "position": "",
+  "accounts": null,
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:38:30.140209 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "",
+  "position": "",
+  "accounts": null,
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:38:30.140452 {
+  "ID": 0,
+  "CreatedAt": "0001-01-01T00:00:00Z",
+  "UpdatedAt": "0001-01-01T00:00:00Z",
+  "DeletedAt": null,
+  "name": "",
+  "position": "",
+  "accounts": null,
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:38:46.086648 Starting server...
+2021/08/23 11:38:46.129971 {
+  "ID": 33,
+  "CreatedAt": "2021-08-16T13:07:07.472926+02:00",
+  "UpdatedAt": "2021-08-16T13:07:07.472926+02:00",
+  "DeletedAt": null,
+  "name": "Agurin",
+  "position": "",
+  "accounts": [
+    {
+      "ID": 114,
+      "CreatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "UpdatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "DeletedAt": null,
+      "PlayerId": 33,
+      "summoner_name": "Agurin"
+    },
+    {
+      "ID": 115,
+      "CreatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "UpdatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "DeletedAt": null,
+      "PlayerId": 33,
+      "summoner_name": "Charlie Heaton"
+    },
+    {
+      "ID": 116,
+      "CreatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "UpdatedAt": "2021-08-16T13:07:07.473675+02:00",
+      "DeletedAt": null,
+      "PlayerId": 33,
+      "summoner_name": "P0ST LEEMONT"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:38:46.130044 Agurin is in the db
+2021/08/23 11:38:46.137753 {
+  "ID": 21,
+  "CreatedAt": "2021-08-16T13:07:04.643409+02:00",
+  "UpdatedAt": "2021-08-16T13:07:04.643409+02:00",
+  "DeletedAt": null,
+  "name": "Noway",
+  "position": "",
+  "accounts": [
+    {
+      "ID": 77,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "noway2u"
+    },
+    {
+      "ID": 78,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "NoELO4uSir"
+    },
+    {
+      "ID": 79,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "Fillanthropist"
+    },
+    {
+      "ID": 80,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "Don Noway"
+    },
+    {
+      "ID": 81,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "ESG Mid"
+    },
+    {
+      "ID": 82,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "ESG Noway4u"
+    },
+    {
+      "ID": 83,
+      "CreatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "UpdatedAt": "2021-08-16T13:07:04.644286+02:00",
+      "DeletedAt": null,
+      "PlayerId": 21,
+      "summoner_name": "Potato4u"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:38:46.137887 Noway is in the db
+2021/08/23 11:38:46.141201 {
+  "ID": 175,
+  "CreatedAt": "2021-08-16T13:07:31.987847+02:00",
+  "UpdatedAt": "2021-08-16T13:07:31.987847+02:00",
+  "DeletedAt": null,
+  "name": "Autophil",
+  "position": "",
+  "accounts": [
+    {
+      "ID": 498,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "TEAM Autophil"
+    },
+    {
+      "ID": 499,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "NoPhilter"
+    },
+    {
+      "ID": 500,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Aram4President"
+    },
+    {
+      "ID": 501,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Lückenphiller"
+    },
+    {
+      "ID": 502,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Philly Weakside"
+    },
+    {
+      "ID": 503,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Leeonard Davinci"
+    },
+    {
+      "ID": 504,
+      "CreatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "UpdatedAt": "2021-08-16T13:07:31.987989+02:00",
+      "DeletedAt": null,
+      "PlayerId": 175,
+      "summoner_name": "Blitzy Philside"
+    }
+  ],
+  "Streamer": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "name": "",
+    "streamer_name": "",
+    "PlayerId": 0
+  }
+}
+2021/08/23 11:38:46.141310 Autophil is in the db
+2021/08/23 11:39:07.035705 Starting server...
+2021/08/23 11:39:07.078637 {
+  "ID": 2,
+  "CreatedAt": "2021-08-16T13:07:07.473124+02:00",
+  "UpdatedAt": "2021-08-16T13:07:07.473124+02:00",
+  "DeletedAt": null,
+  "name": "Agurin",
+  "streamer_name": "",
+  "PlayerId": 33
+}
+2021/08/23 11:39:07.078700 Agurin is in the db
+2021/08/23 11:39:07.082469 {
+  "ID": 1,
+  "CreatedAt": "2021-08-16T13:07:04.643612+02:00",
+  "UpdatedAt": "2021-08-16T13:07:04.643612+02:00",
+  "DeletedAt": null,
+  "name": "Noway",
+  "streamer_name": "",
+  "PlayerId": 21
+}
+2021/08/23 11:39:07.084484 Noway is in the db
+2021/08/23 11:39:07.087108 {
+  "ID": 11,
+  "CreatedAt": "2021-08-23T11:34:17.193217+02:00",
+  "UpdatedAt": "2021-08-23T11:34:17.193217+02:00",
+  "DeletedAt": null,
+  "name": "Autophil",
+  "streamer_name": "Autophil",
+  "PlayerId": 175
+}
+2021/08/23 11:39:07.087177 Autophil is in the db
