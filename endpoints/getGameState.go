@@ -135,7 +135,7 @@ func GetGameState(c *fiber.Ctx) error {
 	search := structs.Streamer{Name: streamer}
 
 	prettyPrint(search)
-	localDb.Model(&structs.Streamer{}).Where("LOWER(streamer_name) = ?", strings.ToLower(search.Name)).First(&search)
+	localDb.Preload("Player").Where("LOWER(streamer_name) = ?", strings.ToLower(search.Name)).First(&search)
 	prettyPrint(search)
 
 	if search.Name == "" {
