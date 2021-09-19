@@ -86,7 +86,7 @@ func makeApiCall(url string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	
+
 	log.Println("Requested:", url)
 
 	bytes, err := ioutil.ReadAll(resp.Body)
@@ -136,6 +136,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 
 	var player structs.Player
 	player.Accounts = riotplayer.LeaguePlayer.Accounts
+	log.Println(player)
 
 	// cut first 3 characters from position
 	if len(riotplayer.LeaguePlayer.Position) > 3 {
@@ -161,6 +162,9 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	if local.ID < 1 {
 		db.Model(&player).Save(&player)
 		log.Println("Saved", player)
+	} else {
+		db.Model(&player).Save(&player)
+		log.Println("Updated", player)
 	}
 }
 
@@ -170,7 +174,7 @@ func populatePage(wg *sync.WaitGroup, page int) {
 	// Do actual work with the page
 	url := getLadderUrl(page)
 	bytes, err := makeApiCall(url)
-	if err != nil {
+	if err != nil || len(bytes) < 50 {
 		log.Fatal(err)
 		return
 	}
