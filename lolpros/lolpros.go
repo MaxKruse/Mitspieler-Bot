@@ -58,7 +58,7 @@ var (
 
 	Streamers []structs.Streamer
 
-	ratelimiter = ratelimit.New(2)
+	ratelimiter = ratelimit.New(1)
 )
 
 func getLadderUrl(page int) string {
@@ -70,6 +70,7 @@ func getPlayerUrl(player string) string {
 }
 
 func makeApiCall(url string) ([]byte, error) {
+	time.Sleep(time.Second * 1)
 	ratelimiter.Take()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
