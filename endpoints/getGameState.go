@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -14,11 +13,6 @@ import (
 	"github.com/yuhanfang/riot/apiclient"
 	"github.com/yuhanfang/riot/constants/region"
 )
-
-func prettyPrint(str interface{}) {
-	strJson, _ := json.MarshalIndent(str, "", "  ")
-	log.Printf("%s\n", string(strJson))
-}
 
 type GameState struct {
 	Game         *apiclient.CurrentGameInfo
@@ -73,12 +67,12 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 		celeb := structs.Account{SummonerName: participant.SummonerName}
 		res := structs.Account{}
 
-		globals.DBConn.Model(&structs.Account{}).First(&res, celeb)
+		globals.DBConn.Debug().First(&res, celeb)
 
 		// Some account was associated
 		if res.PlayerId != 0 {
 			temp := structs.Player{}
-			globals.DBConn.Model(&structs.Player{}).First(&temp, res.PlayerId)
+			globals.DBConn.Debug().First(&temp, res.PlayerId)
 
 			encryptedSummonerId := participant.SummonerId
 			res, _ := globals.RiotClient.GetAllLeaguePositionsForSummoner(globals.BGContext, region.EUW1, encryptedSummonerId)
@@ -134,16 +128,14 @@ func GetGameState(c *fiber.Ctx) error {
 
 	search := structs.Streamer{Name: streamer}
 
-	prettyPrint(search)
-	localDb.Preload("Player").Where("LOWER(streamer_name) = ?", strings.ToLower(search.Name)).First(&search)
-	prettyPrint(search)
+	localDb.Debug().Where("LOWER(streamer_name) = ?", strings.ToLower(search.Name)).First(&search)
 
 	if search.Name == "" {
 		return c.Status(404).SendString(fmt.Sprintf("%s not in database. Please contact BH_Lithium.", streamer))
 	}
 
 	player := structs.Player{}
-	localDb.Preload("Accounts").Preload("Streamers").First(&player, search.PlayerId)
+	localDb.Debug().Preload("Accounts").Preload("Streamer").First(&player, search.PlayerId)
 
 	if len(player.Accounts) == 0 {
 		return c.SendString("Keine accounts gefunden.")
@@ -154,7 +146,7 @@ func GetGameState(c *fiber.Ctx) error {
 		return c.SendString(fmt.Sprintf("%s ist in keinen Game.", streamer))
 	}
 
-	globals.DBConn.Create(&structs.CommandLog{Requester: "Nightbot", Command: "!mitspieler", Channel: streamer})
+	globals.DBConn.Debug().Create(&structs.CommandLog{Requester: "Nightbot", Command: "!mitspieler", Channel: streamer})
 
 	res, err := resolveActiveGame(gameinfo.Game, gameinfo.SummonerName, streamer)
 	if err != nil {

@@ -163,14 +163,17 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	db.First(&local, player)
 	// Only create entry if player is not in db
 	if local.ID < 1 {
-		db.Model(&player).Save(&player)
-		log.Println("Saved")
-		prettyPrint(player)
+		db.Debug().Save(&player)
+		log.Println("Saved", local.Name)
 	} else {
-		local.Accounts = player.Accounts
-		db.Model(&player).Save(&local)
-		log.Println("Updated")
-		prettyPrint(player)
+		// delete all old entries
+		// for each local.account, delete them
+		for _, account := range local.Accounts {
+			db.Debug().Delete(&account, account)
+		}
+		db.Debug().Delete(&local, local)
+		db.Debug().Save(&player)
+		log.Println("Updated", local.Name)
 	}
 }
 
