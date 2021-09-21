@@ -26,7 +26,7 @@ services:
       context: .
       dockerfile: lolpros/Dockerfile
     
-    restart: unless-stopped
+    restart: never
     volumes:
       - ./lolpros:/app
 

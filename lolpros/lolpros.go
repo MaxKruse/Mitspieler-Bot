@@ -10,10 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/maxkruse/Mitspieler-Bot/client/structs"
@@ -24,9 +22,7 @@ import (
 
 	// Ratelimit http
 	"go.uber.org/ratelimit"
-
 	// Cron
-	"github.com/robfig/cron"
 )
 
 // structs to decode values into
@@ -171,7 +167,8 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 		log.Println("Saved")
 		prettyPrint(player)
 	} else {
-		db.Model(&player).Save(&player)
+		local.Accounts = player.Accounts
+		db.Model(&player).Save(&local)
 		log.Println("Updated")
 		prettyPrint(player)
 	}
@@ -266,19 +263,4 @@ func main() {
 
 	// create the tables
 	db.AutoMigrate(structs.Player{}, structs.Account{}, structs.Streamer{})
-
-	// Make a new cron sched
-	sched := cron.New()
-	log.Println("Running every 6th Hour")
-	sched.AddFunc("0 6 * * *", FetchLolpros)
-
-	// Start the scheduler
-	sched.Start()
-
-	// Wait for the signal to stop
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-	<-sig
-	log.Println("Stopping server...")
-	sched.Stop()
 }
