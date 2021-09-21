@@ -270,7 +270,7 @@ func main() {
 	// Make a new cron sched
 	sched := cron.New()
 	log.Println("Running every 6th Hour")
-	sched.AddFunc("0 */6 * * *", FetchLolpros)
+	sched.AddFunc("0 6 * * *", FetchLolpros)
 
 	// Start the scheduler
 	sched.Start()
