@@ -8,9 +8,6 @@ services:
       POSTGRES_PASSWORD: mitspieler
       POSTGRES_DB: lolpros
 
-    ports: 
-     - "5432:5432"
-
   app:
     restart: unless-stopped
     build: .
@@ -23,3 +20,15 @@ services:
 
     depends_on:
      - db
+
+  lolpros:
+    build:
+      context: .
+      dockerfile: lolpros/Dockerfile
+    
+    restart: unless-stopped
+    volumes:
+      - ./lolpros:/app
+
+    depends_on:
+      - db

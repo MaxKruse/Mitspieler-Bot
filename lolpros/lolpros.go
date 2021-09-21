@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -11,17 +10,23 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
-	// import gorm
 	"github.com/maxkruse/Mitspieler-Bot/client/structs"
+
+	// import gorm
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	// Ratelimit http
 	"go.uber.org/ratelimit"
+
+	// Cron
+	"github.com/robfig/cron"
 )
 
 // structs to decode values into
@@ -41,7 +46,7 @@ type LeaguePlayer struct {
 }
 
 const (
-	DB_HOST = "localhost"
+	DB_HOST = "db"
 	DB_PORT = "5432"
 	DB_USER = "postgres"
 	DB_PASS = "mitspieler"
@@ -49,11 +54,11 @@ const (
 	// Use fmt.Sprintf on this to change the page
 	LADDER_URL = "https://api.lolpros.gg/es/ladder?page=%d&sort=rank&order=desc"
 	PLAYER_URL = "https://api.lolpros.gg/es/players/%s"
+
+	PLAYERS = 2500.0 // lolpros limitation
 )
 
 var (
-	players = flag.Int("players", 50, "Number of players to pull")
-
 	db *gorm.DB
 
 	Streamers []structs.Streamer
@@ -137,7 +142,8 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 
 	var player structs.Player
 	player.Accounts = riotplayer.LeaguePlayer.Accounts
-	log.Println(player)
+	log.Println("Got: ")
+	prettyPrint(player)
 
 	// cut first 3 characters from position
 	if len(riotplayer.LeaguePlayer.Position) > 3 {
@@ -162,10 +168,12 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	// Only create entry if player is not in db
 	if local.ID < 1 {
 		db.Model(&player).Save(&player)
-		log.Println("Saved", player)
+		log.Println("Saved")
+		prettyPrint(player)
 	} else {
 		db.Model(&player).Save(&player)
-		log.Println("Updated", player)
+		log.Println("Updated")
+		prettyPrint(player)
 	}
 }
 
@@ -193,33 +201,9 @@ func populatePage(wg *sync.WaitGroup, page int) {
 	}
 }
 
-func main() {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	logfile, err := os.OpenFile("lolpros.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	multi := io.MultiWriter(logfile, os.Stdout)
-	log.SetOutput(multi)
-	log.Println("Starting server...")
-	defer logfile.Close()
-
-	flag.Parse()
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Berlin", DB_HOST, DB_USER, DB_PASS, "lolpros", DB_PORT)
-	err = error(nil)
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	// create the tables
-	db.AutoMigrate(structs.Player{}, structs.Account{}, structs.Streamer{})
-
+func FetchLolpros() {
 	// Load streamers from json
-	file, err := os.Open("streamers.json")
+	file, err := os.Open("/app/streamers.json")
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -233,7 +217,7 @@ func main() {
 	}
 
 	// make a go routine for each page index until 5
-	count := int(math.Ceil(float64(*players) / float64(50)))
+	count := int(math.Ceil(PLAYERS / float64(50)))
 
 	var wg sync.WaitGroup
 	wg.Add(count)
@@ -257,4 +241,44 @@ func main() {
 	}
 
 	wg.Wait()
+}
+
+func main() {
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	logfile, err := os.OpenFile("lolpros.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	multi := io.MultiWriter(logfile, os.Stdout)
+	log.SetOutput(multi)
+	log.Println("Starting Lolpros Fetcher...")
+	defer logfile.Close()
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Berlin", DB_HOST, DB_USER, DB_PASS, "lolpros", DB_PORT)
+	err = error(nil)
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	log.Println("Connected to database")
+
+	// create the tables
+	db.AutoMigrate(structs.Player{}, structs.Account{}, structs.Streamer{})
+
+	// Make a new cron sched
+	sched := cron.New()
+	log.Println("Running every 6th Hour")
+	sched.AddFunc("0 */6 * * *", FetchLolpros)
+
+	// Start the scheduler
+	sched.Start()
+
+	// Wait for the signal to stop
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+	log.Println("Stopping server...")
+	sched.Stop()
 }
