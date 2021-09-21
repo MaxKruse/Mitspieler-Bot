@@ -263,4 +263,6 @@ func main() {
 
 	// create the tables
 	db.AutoMigrate(structs.Player{}, structs.Account{}, structs.Streamer{})
+
+	FetchLolpros()
 }
