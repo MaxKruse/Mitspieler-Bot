@@ -138,8 +138,6 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 
 	var player structs.Player
 	player.Accounts = riotplayer.LeaguePlayer.Accounts
-	log.Println("Got: ")
-	prettyPrint(player)
 
 	// cut first 3 characters from position
 	if len(riotplayer.LeaguePlayer.Position) > 3 {
@@ -154,26 +152,43 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	for _, streamer := range Streamers {
 		if streamer.Name == player.Name {
 			player.Streamer = streamer
-			prettyPrint(player)
+			log.Println("Streamer Found:", player.Name)
 			break
 		}
 	}
 
 	var local structs.Player
-	db.First(&local, player)
+	db.Preload("Accounts").First(&local, player)
 	// Only create entry if player is not in db
 	if local.ID < 1 {
-		db.Debug().Save(&player)
-		log.Println("Saved", local.Name)
+		db.Save(&player)
+		log.Println("Saved", player.Name)
 	} else {
-		// delete all old entries
-		// for each local.account, delete them
-		for _, account := range local.Accounts {
-			db.Debug().Delete(&account, account)
+		tmp := player.Accounts
+		addedAccs := []structs.Account{}
+		for _, account := range tmp {
+			found := false
+			new := structs.Account{}
+			for _, newAccount := range local.Accounts {
+				log.Println(newAccount.SummonerName, account.SummonerName)
+				if strings.EqualFold(newAccount.SummonerName, account.SummonerName) {
+					found = true
+					new = newAccount
+				}
+			}
+			if !found {
+				player.Accounts = append(player.Accounts, new)
+				addedAccs = append(addedAccs, new)
+				log.Println("Added", new.SummonerName)
+			}
 		}
-		db.Debug().Delete(&local, local)
-		db.Debug().Save(&player)
-		log.Println("Updated", local.Name)
+
+		if len(addedAccs) > 0 {
+			db.Save(&player)
+			log.Println("Updated", local.Name)
+		} else {
+			log.Println("No changes for", local.Name)
+		}
 	}
 }
 

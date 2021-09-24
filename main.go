@@ -174,6 +174,7 @@ func main() {
 
 	log.Println("Connected to database")
 	globals.DBConn.AutoMigrate(&structs.CommandLog{})
+	globals.DBConn.AutoMigrate(structs.Player{}, structs.Account{}, structs.Streamer{})
 
 	setupRiot()
 

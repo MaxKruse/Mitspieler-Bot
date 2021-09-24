@@ -8,6 +8,9 @@ services:
       POSTGRES_PASSWORD: mitspieler
       POSTGRES_DB: lolpros
 
+    ports:
+      - "5432:5432"
+
   app:
     restart: unless-stopped
     build: .
