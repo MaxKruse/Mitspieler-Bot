@@ -170,7 +170,6 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 			found := false
 			new := structs.Account{}
 			for _, newAccount := range local.Accounts {
-				log.Println(newAccount.SummonerName, account.SummonerName)
 				if strings.EqualFold(newAccount.SummonerName, account.SummonerName) {
 					found = true
 					new = newAccount
