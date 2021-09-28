@@ -2,15 +2,17 @@
 
 # Mitspieler Bot
 
-This project contains a Twitch.tv chatbot, which aims at providing the `!mitspieler` or `!teammates` commands for League of Legends players.
+This webserver provides endpoints, currently used by [Agurin](https://twitch.tv/agurin)
 
 ## Getting Started
 
-> go build -o my_cool_bot
+> docker-compose up
 
-Then run it
+To start the fetcher, i recommend using cron to start the service as follows:
 
-> ./my_cool_bot --help
+> 0 0 0 * * cd <my_path> && /usr/bin/docker-compose up -d lolpros
+
+This will start the lolpros fetcher every day at midnight.
 
 ## Usage
 
@@ -22,5 +24,5 @@ Add a command with the following syntax:
 
 ## Credits
 
-* <https://github.com/gempir/go-twitch-irc>
 * <https://github.com/yuhanfang/riot>
+* <https://github.com/gofiber/fiber>
