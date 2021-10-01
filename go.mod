@@ -4,7 +4,8 @@ go 1.16
 
 require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
-	github.com/gofiber/fiber/v2 v2.17.0
+	github.com/gofiber/fiber/v2 v2.19.0
+	github.com/gofiber/template v1.6.17 // indirect
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
 	github.com/valyala/fasthttp v1.29.0 // indirect
 	github.com/yuhanfang/riot v0.0.0-20191205014607-43dd1994728e

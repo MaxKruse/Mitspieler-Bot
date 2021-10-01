@@ -15,6 +15,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/gofiber/template/django"
 	"github.com/maxkruse/Mitspieler-Bot/client/endpoints"
 	"github.com/maxkruse/Mitspieler-Bot/client/globals"
 	"github.com/maxkruse/Mitspieler-Bot/client/structs"
@@ -182,7 +183,12 @@ func main() {
 	globals.BGContext = context.Background()
 
 	// Development hot reload
-	app := fiber.New()
+	engine := django.New("./views", ".django")
+	engine.Reload(true)
+
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
 
 	app.Get("/streamer/:streamerName", endpoints.GetGameState)
 	app.Use("/reload/config", basicauth.New(basicauth.Config{
@@ -197,6 +203,11 @@ func main() {
 		setupRiot()
 		return c.Status(202).SendString("Reloaded config")
 	})
+
+	app.Use("/dashboard", basicauth.New(basicauth.Config{
+		Users: config.USERS,
+	}))
+	app.Get("/dashboard", endpoints.Dashboard)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", config.PORT)))
 }

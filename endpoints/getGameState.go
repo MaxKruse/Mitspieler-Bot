@@ -137,6 +137,8 @@ func GetGameState(c *fiber.Ctx) error {
 	requester := c.Query("requester", streamer)
 	requester = strings.ReplaceAll(requester, "@", "")
 
+	globals.DBConn.Debug().Create(&structs.CommandLog{Requester: requester, Command: "!mitspieler", Channel: streamer})
+
 	player := structs.Player{}
 	localDb.Debug().Preload("Accounts").Preload("Streamer").First(&player, search.PlayerId)
 
@@ -148,8 +150,6 @@ func GetGameState(c *fiber.Ctx) error {
 	if err != nil {
 		return c.SendString(fmt.Sprintf("%s ist in keinen Game.", streamer))
 	}
-
-	globals.DBConn.Debug().Create(&structs.CommandLog{Requester: requester, Command: "!mitspieler", Channel: streamer})
 
 	res, err := resolveActiveGame(gameinfo.Game, gameinfo.SummonerName, streamer)
 	if err != nil {
