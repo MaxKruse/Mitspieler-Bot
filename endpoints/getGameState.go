@@ -146,14 +146,14 @@ func GetGameState(c *fiber.Ctx) error {
 
 	gameinfo, err := findActiveAccount(player)
 	if err != nil {
-		return c.SendString(fmt.Sprintf("%s ist in keinen Game.", streamer))
+		return c.SendString(fmt.Sprintf("%s ist in keinem Game.", streamer))
 	}
 
 	globals.DBConn.Debug().Create(&structs.CommandLog{Requester: requester, Command: "!mitspieler", Channel: streamer})
 
 	res, err := resolveActiveGame(gameinfo.Game, gameinfo.SummonerName, streamer)
 	if err != nil {
-		return c.SendString(fmt.Sprintf("%s ist in keinen Game.", streamer))
+		return c.SendString(fmt.Sprintf("%s ist in keinem Game.", streamer))
 	}
 
 	return c.SendString(res)
