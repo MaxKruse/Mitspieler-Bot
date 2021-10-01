@@ -4,10 +4,8 @@ go 1.16
 
 require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
-	github.com/gempir/go-twitch-irc/v2 v2.6.0
 	github.com/gofiber/fiber/v2 v2.17.0
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
-	github.com/robfig/cron v1.2.0
 	github.com/valyala/fasthttp v1.29.0 // indirect
 	github.com/yuhanfang/riot v0.0.0-20191205014607-43dd1994728e
 	go.uber.org/ratelimit v0.2.0
