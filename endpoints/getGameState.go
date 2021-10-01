@@ -134,6 +134,9 @@ func GetGameState(c *fiber.Ctx) error {
 		return c.Status(404).SendString(fmt.Sprintf("%s not in database. Please contact BH_Lithium.", streamer))
 	}
 
+	requester := c.Query("requester", streamer)
+	requester = strings.ReplaceAll(requester, "@", "")
+
 	player := structs.Player{}
 	localDb.Debug().Preload("Accounts").Preload("Streamer").First(&player, search.PlayerId)
 
@@ -146,7 +149,7 @@ func GetGameState(c *fiber.Ctx) error {
 		return c.SendString(fmt.Sprintf("%s ist in keinen Game.", streamer))
 	}
 
-	globals.DBConn.Debug().Create(&structs.CommandLog{Requester: "Nightbot", Command: "!mitspieler", Channel: streamer})
+	globals.DBConn.Debug().Create(&structs.CommandLog{Requester: requester, Command: "!mitspieler", Channel: streamer})
 
 	res, err := resolveActiveGame(gameinfo.Game, gameinfo.SummonerName, streamer)
 	if err != nil {
