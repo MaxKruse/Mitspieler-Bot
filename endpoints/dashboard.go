@@ -17,13 +17,14 @@ func Dashboard(c *fiber.Ctx) error {
 	}
 
 	content := "<table>"
-	content += "<tr><th>User</th><th>Command</th><th>Time</th></tr>"
+	content += "<tr><th>User</th><th>Command</th><th>Channel</th><th>Time</th></tr>"
 
 	for _, l := range commandLogs {
 		content += "<tr>"
 
 		content += "<td>" + l.Requester + "</td>"
 		content += "<td>" + l.Command + "</td>"
+		content += "<td>" + l.Channel + "</td>"
 		content += "<td>" + l.CreatedAt.Format("2006-01-02 15:04:05") + "</td>"
 
 		content += "</tr>"
