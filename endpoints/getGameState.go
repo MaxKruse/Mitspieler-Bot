@@ -1,11 +1,13 @@
 package endpoints
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/maxkruse/Mitspieler-Bot/client/globals"
@@ -20,15 +22,18 @@ type GameState struct {
 }
 
 func findActiveAccount(account structs.Player) (GameState, error) {
+	// 3 second timeout
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 	for _, acc := range account.Accounts {
-		summoner, err := globals.RiotClient.GetBySummonerName(globals.BGContext, region.EUW1, acc.SummonerName)
+		summoner, err := globals.RiotClient.GetBySummonerName(timeoutCtx, region.EUW1, acc.SummonerName)
 		if err != nil {
 			log.Println("GetBySummonerName:", err)
 			continue
 		}
 
 		// get current game
-		activeGame, err := globals.RiotClient.GetCurrentGameInfoBySummoner(globals.BGContext, region.EUW1, summoner.ID)
+		activeGame, err := globals.RiotClient.GetCurrentGameInfoBySummoner(timeoutCtx, region.EUW1, summoner.ID)
 		if err != nil {
 			log.Println("GetCurrentGameInfoBySummoner:", err)
 			continue
@@ -43,6 +48,10 @@ func findActiveAccount(account structs.Player) (GameState, error) {
 }
 
 func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string, streamerName string) (string, error) {
+
+	// 2 second timeout
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 
 	var players []structs.IngamePlayer
 
@@ -75,7 +84,7 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 			globals.DBConn.Debug().First(&temp, res.PlayerId)
 
 			encryptedSummonerId := participant.SummonerId
-			res, _ := globals.RiotClient.GetAllLeaguePositionsForSummoner(globals.BGContext, region.EUW1, encryptedSummonerId)
+			res, _ := globals.RiotClient.GetAllLeaguePositionsForSummoner(timeoutCtx, region.EUW1, encryptedSummonerId)
 
 			var leaguePos apiclient.LeaguePosition
 			for _, pos := range res {

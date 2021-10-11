@@ -179,9 +179,6 @@ func main() {
 
 	setupRiot()
 
-	// Setup global context
-	globals.BGContext = context.Background()
-
 	// Development hot reload
 	engine := django.New("./views", ".django")
 	engine.Reload(true)

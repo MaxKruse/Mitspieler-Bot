@@ -1,8 +1,6 @@
 package globals
 
 import (
-	"context"
-
 	"github.com/yuhanfang/riot/apiclient"
 	"github.com/yuhanfang/riot/staticdata"
 	uber "go.uber.org/ratelimit"
@@ -15,8 +13,6 @@ var (
 
 	RiotClient apiclient.Client
 	Champions  *staticdata.ChampionList
-
-	BGContext context.Context
 
 	// Rate limiter
 	Ratelimiter uber.Limiter
