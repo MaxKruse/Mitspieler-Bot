@@ -34,8 +34,12 @@ type LadderEntry struct {
 type RiotPlayer struct {
 	LeaguePlayer `json:"league_player"`
 	Name         string `json:"name"`
+	Teams        []Team `json:"teams"`
 }
 
+type Team struct {
+	Name string `json:"tag"`
+}
 type LeaguePlayer struct {
 	Position string            `json:"position"`
 	Accounts []structs.Account `json:"accounts"`
@@ -147,6 +151,12 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	}
 
 	player.Name = riotplayer.Name
+
+	if len(riotplayer.Teams) > 0 {
+		player.TeamTag = riotplayer.Teams[0].Name
+	} else {
+		player.TeamTag = ""
+	}
 
 	// If player.Name is in Streamers, save
 	for _, streamer := range Streamers {

@@ -9,6 +9,7 @@ type Player struct {
 	gorm.Model
 	Name     string    `json:"name"`
 	Position string    `json:"position"`
+	TeamTag  string    `json:"team"`
 	Accounts []Account `json:"accounts"`
 	Streamer Streamer
 }
@@ -32,6 +33,7 @@ type IngamePlayer struct {
 	Team         bool
 	Position     string
 	LeaguePoints int
+	TeamTag      string
 }
 
 type CommandLog struct {

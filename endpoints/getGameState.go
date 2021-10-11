@@ -86,7 +86,7 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 			}
 
 			if temp.Name != "" {
-				players = append(players, structs.IngamePlayer{Name: temp.Name, Champion: champName, Team: myTeamId == participant.TeamId, LeaguePoints: leaguePos.LeaguePoints, Position: temp.Position})
+				players = append(players, structs.IngamePlayer{Name: temp.Name, Champion: champName, Team: myTeamId == participant.TeamId, LeaguePoints: leaguePos.LeaguePoints, Position: temp.Position, TeamTag: temp.TeamTag})
 			}
 		}
 	}
@@ -104,7 +104,14 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 	var myTeamPlayers []string
 	var enemyTeamPlayers []string
 	for _, player := range players {
-		s := fmt.Sprintf("%s (%s) %d LP", player.Name, player.Champion, player.LeaguePoints)
+		var name string
+		if player.TeamTag != "" {
+			name = fmt.Sprintf("%s %s", player.TeamTag, player.Name)
+		} else {
+			name = player.Name
+		}
+
+		s := fmt.Sprintf("%s (%s) %d LP", name, player.Champion, player.LeaguePoints)
 		if player.Team {
 			myTeamPlayers = append(myTeamPlayers, s)
 		} else {
