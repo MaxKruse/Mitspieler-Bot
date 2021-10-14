@@ -158,6 +158,9 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 		player.TeamTag = ""
 	}
 
+	var local structs.Player
+	db.Preload("Accounts").First(&local, player)
+
 	// If player.Name is in Streamers, save
 	for _, streamer := range Streamers {
 		if streamer.Name == player.Name {
@@ -167,8 +170,6 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 		}
 	}
 
-	var local structs.Player
-	db.Preload("Accounts").First(&local, player)
 	// Only create entry if player is not in db
 	if local.ID < 1 {
 		db.Save(&player)
@@ -188,7 +189,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 			if !found {
 				player.Accounts = append(player.Accounts, new)
 				addedAccs = append(addedAccs, new)
-				log.Println("Added", new.SummonerName)
+				log.Println("Added", new)
 			}
 		}
 
