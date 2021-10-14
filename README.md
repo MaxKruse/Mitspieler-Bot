@@ -19,7 +19,9 @@ I recommend to start this as followed
 This is because sometimes the app and lolpros containers start hanging quite severely
 
 > docker-compose up -d db
+> 
 > docker-compose up -d app
+> 
 > docker-compose up -d lolpros
 
 ## Usage
