@@ -14,6 +14,14 @@ To start the fetcher, i recommend using cron to start the service as follows:
 
 This will start the lolpros fetcher every day at midnight.
 
+I recommend to start this as followed
+
+This is because sometimes the app and lolpros containers start hanging quite severely
+
+> docker-compose up -d db
+> docker-compose up -d app
+> docker-compose up -d lolpros
+
 ## Usage
 
 This bot supports Nightbot.
