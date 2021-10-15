@@ -30,7 +30,7 @@ This bot supports Nightbot.
 
 Add a command with the following syntax:
 
-`$(urlfetch http://<bot-url>/streamer/$(channel))`
+`$(urlfetch http://<bot-url>/streamer/$(channel)?requester=$(touser))`
 
 ## Credits
 
