@@ -143,7 +143,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	var player structs.Player
 
 	for _, t := range riotplayer.LeaguePlayer.Accounts {
-		player.Accounts = append(player.Accounts, &t)
+		player.Accounts = append(player.Accounts, t)
 	}
 
 	// cut first 3 characters from position
@@ -187,12 +187,12 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 			for _, newAccount := range player.Accounts {
 				if strings.EqualFold(newAccount.SummonerName, account.SummonerName) {
 					found = true
-					new = *newAccount
+					new = newAccount
 					break
 				}
 			}
 			if !found {
-				player.Accounts = append(player.Accounts, &new)
+				player.Accounts = append(player.Accounts, new)
 				log.Println("Added", new)
 			}
 		}

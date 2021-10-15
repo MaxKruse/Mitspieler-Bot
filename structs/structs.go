@@ -7,10 +7,10 @@ import (
 // Database Specifics
 type Player struct {
 	gorm.Model
-	Name     string     `json:"name"`
-	Position string     `json:"position"`
-	TeamTag  string     `json:"team"`
-	Accounts []*Account `json:"accounts"`
+	Name     string    `json:"name"`
+	Position string    `json:"position"`
+	TeamTag  string    `json:"team"`
+	Accounts []Account `json:"accounts"`
 	Streamer *Streamer
 }
 
