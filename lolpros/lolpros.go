@@ -166,7 +166,9 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	// If player.Name is in Streamers, save
 	for _, streamer := range Streamers {
 		if streamer.Name == player.Name && player.Streamer == nil {
-			player.Streamer = &streamer
+			player.Streamer = new(structs.Streamer)
+			player.Streamer.Name = streamer.Name
+			player.Streamer.StreamerName = streamer.StreamerName
 			log.Println("Streamer Found:", player.Name)
 			prettyPrint(player)
 			break
@@ -186,6 +188,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 				if strings.EqualFold(newAccount.SummonerName, account.SummonerName) {
 					found = true
 					new = *newAccount
+					break
 				}
 			}
 			if !found {
