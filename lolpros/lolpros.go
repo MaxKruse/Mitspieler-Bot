@@ -159,13 +159,14 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	}
 
 	var local structs.Player
-	db.Preload("Accounts").First(&local, player)
+	db.Preload("Accounts").Preload("Streamer").First(&local, player)
 
 	// If player.Name is in Streamers, save
 	for _, streamer := range Streamers {
 		if streamer.Name == player.Name {
 			player.Streamer = streamer
 			log.Println("Streamer Found:", player.Name)
+			prettyPrint(player)
 			break
 		}
 	}
@@ -175,9 +176,9 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 		db.Save(&player)
 		log.Println("Saved", player.Name)
 	} else {
-		tmp := player.Accounts
+		accs := player.Accounts
 		addedAccs := []structs.Account{}
-		for _, account := range tmp {
+		for _, account := range accs {
 			found := false
 			new := structs.Account{}
 			for _, newAccount := range local.Accounts {
@@ -193,12 +194,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 			}
 		}
 
-		if len(addedAccs) > 0 {
-			db.Save(&player)
-			log.Println("Updated", local.Name)
-		} else {
-			log.Println("No changes for", local.Name)
-		}
+		db.Save(&player)
 	}
 }
 
