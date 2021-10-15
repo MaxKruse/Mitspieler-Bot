@@ -165,7 +165,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 
 	// If player.Name is in Streamers, save
 	for _, streamer := range Streamers {
-		if streamer.Name == player.Name && player.Streamer.ID == 0 {
+		if streamer.Name == player.Name && player.Streamer == nil {
 			player.Streamer = &streamer
 			log.Println("Streamer Found:", player.Name)
 			prettyPrint(player)
