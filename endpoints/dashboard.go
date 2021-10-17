@@ -11,7 +11,7 @@ func Dashboard(c *fiber.Ctx) error {
 	// get the last 50 CommandLogs
 	commandLogs := []structs.CommandLog{}
 
-	err := globals.DBConn.Find(&commandLogs).Limit(50).Order("created_at desc").Error
+	err := globals.DBConn.Limit(50).Order("created_at desc").Find(&commandLogs).Error
 	if err != nil {
 		return c.Status(500).JSON(err)
 	}
