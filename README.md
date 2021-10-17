@@ -28,9 +28,16 @@ This is because sometimes the app and lolpros containers start hanging quite sev
 
 This bot supports Nightbot.
 
+To have you or a streamer near you supported, please message BH_Lithium on twitch.
+
 Add a command with the following syntax:
 
-`$(urlfetch http://<bot-url>/streamer/$(channel)?requester=$(touser))`
+`$(urlfetch https://mkruse.ddnss.de/streamer/$(Channel)?requester=$(User))`
+
+![Moobot Example](examples/moobot.png)
+
+![Nightbot Example](examples/nightbot.png)
+
 
 ## Credits
 
