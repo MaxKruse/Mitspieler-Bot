@@ -201,6 +201,15 @@ func main() {
 		return c.Status(202).SendString("Reloaded config")
 	})
 
+	app.Use("/add_streamer", basicauth.New(basicauth.Config{
+		Users: config.USERS,
+	}))
+	app.Get("/add_streamer", func(c *fiber.Ctx) error {
+		return c.Render("add_streamer", nil)
+	})
+
+	app.Post("/api/v1/add_streamer", endpoints.AddStreamer)
+
 	app.Use("/dashboard", basicauth.New(basicauth.Config{
 		Users: config.USERS,
 	}))
