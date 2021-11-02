@@ -124,6 +124,22 @@ func prettyPrint(str interface{}) {
 	log.Printf("%s\n", string(strJson))
 }
 
+type comparitor func(str1 string, str2 string) bool
+
+func compare(str1 string, str2 string) bool {
+	return strings.EqualFold(str1, str2)
+}
+
+func appendWithCondition(input []structs.Account, account structs.Account, comp comparitor) []structs.Account {
+	for _, acc := range input {
+		if comp(acc.SummonerName, account.SummonerName) {
+			return input
+		}
+	}
+	log.Println("Appending:", account.SummonerName)
+	return append(input, account)
+}
+
 func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 	defer wg.Done()
 
@@ -142,9 +158,7 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 
 	var player structs.Player
 
-	for _, t := range riotplayer.LeaguePlayer.Accounts {
-		player.Accounts = append(player.Accounts, t)
-	}
+	player.Accounts = append(player.Accounts, riotplayer.LeaguePlayer.Accounts...)
 
 	// cut first 3 characters from position
 	if len(riotplayer.LeaguePlayer.Position) > 3 {
@@ -175,30 +189,13 @@ func savePlayer(wg *sync.WaitGroup, entry LadderEntry) {
 		}
 	}
 
-	// Only create entry if player is not in db
-	if player.ID < 1 {
-		db.Save(&player)
-		log.Println("Saved", player.Name)
-	} else {
-		accs := player.Accounts
-		for _, account := range accs {
-			found := false
-			new := structs.Account{}
-			for _, newAccount := range player.Accounts {
-				if strings.EqualFold(newAccount.SummonerName, account.SummonerName) {
-					found = true
-					new = newAccount
-					break
-				}
-			}
-			if !found {
-				player.Accounts = append(player.Accounts, new)
-				log.Println("Added", new)
-			}
-		}
-
-		db.Save(&player)
+	for _, account := range riotplayer.LeaguePlayer.Accounts {
+		player.Accounts = appendWithCondition(player.Accounts, account, compare)
 	}
+
+	db.Save(&player)
+	log.Println("Saved", player.Name)
+
 }
 
 func populatePage(wg *sync.WaitGroup, page int) {
