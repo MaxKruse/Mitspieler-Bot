@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.16-alpine
+FROM golang:1.18-alpine
 
 WORKDIR /app
+
+RUN apk add git
 
 COPY go.mod ./
 COPY go.sum ./
