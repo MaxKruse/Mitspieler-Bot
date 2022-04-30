@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
+
 	"io/ioutil"
 	"log"
 	"math"
@@ -266,18 +266,12 @@ func FetchLolpros() {
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	logfile, err := os.OpenFile("lolpros.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	multi := io.MultiWriter(logfile, os.Stdout)
-	log.SetOutput(multi)
+
 	log.Println("Starting Lolpros Fetcher...")
-	defer logfile.Close()
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Berlin", DB_HOST, DB_USER, DB_PASS, "lolpros", DB_PORT)
-	err = error(nil)
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err)

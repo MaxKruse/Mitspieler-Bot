@@ -15,6 +15,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/template/django"
 	"github.com/maxkruse/Mitspieler-Bot/client/endpoints"
 	"github.com/maxkruse/Mitspieler-Bot/client/globals"
@@ -214,6 +215,8 @@ func main() {
 		Users: config.USERS,
 	}))
 	app.Get("/dashboard", endpoints.Dashboard)
+
+	app.Get("/monitor", monitor.New())
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", config.PORT)))
 }

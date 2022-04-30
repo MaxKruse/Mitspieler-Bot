@@ -14,6 +14,7 @@ import (
 	"github.com/maxkruse/Mitspieler-Bot/client/structs"
 	"github.com/yuhanfang/riot/apiclient"
 	"github.com/yuhanfang/riot/constants/region"
+	"github.com/yuhanfang/riot/constants/tier"
 )
 
 type GameState struct {
@@ -63,6 +64,9 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 		}
 	}
 
+	runningTotalLP := 0
+	totalPlayers := 0
+
 	for _, participant := range gameinfo.Participants {
 
 		var champName string
@@ -78,16 +82,27 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 
 		globals.DBConn.Debug().First(&res, celeb)
 
+		encryptedSummonerId := participant.SummonerId
+		playerPositions, _ := globals.RiotClient.GetAllLeaguePositionsForSummoner(timeoutCtx, region.EUW1, encryptedSummonerId)
+
+		for _, pos := range playerPositions {
+			if pos.QueueType == "RANKED_SOLO_5x5" {
+
+				if pos.Tier == tier.Challenger || pos.Tier == tier.Grandmaster || pos.Tier == tier.Master {
+					runningTotalLP += pos.LeaguePoints
+					totalPlayers++
+					break
+				}
+			}
+		}
+
 		// Some account was associated
 		if res.PlayerId != 0 {
 			temp := structs.Player{}
 			globals.DBConn.Debug().First(&temp, res.PlayerId)
 
-			encryptedSummonerId := participant.SummonerId
-			res, _ := globals.RiotClient.GetAllLeaguePositionsForSummoner(timeoutCtx, region.EUW1, encryptedSummonerId)
-
 			var leaguePos apiclient.LeaguePosition
-			for _, pos := range res {
+			for _, pos := range playerPositions {
 				if pos.QueueType == "RANKED_SOLO_5x5" {
 					leaguePos = pos
 					break
@@ -133,6 +148,10 @@ func resolveActiveGame(gameinfo *apiclient.CurrentGameInfo, summonerName string,
 	if len(enemyTeamPlayers) > 0 {
 		res += " | " + "Gegner: " + strings.Join(enemyTeamPlayers, ", ")
 	}
+
+	avgLp := runningTotalLP / totalPlayers
+
+	res += " | Average " + fmt.Sprintf("%d", avgLp) + " LP"
 
 	return res, nil
 }

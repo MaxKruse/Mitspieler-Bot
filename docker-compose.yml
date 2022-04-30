@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   db:
+    restart: always
     image: postgres:13-alpine
     environment: 
       POSTGRES_USER: postgres
@@ -11,9 +12,16 @@ services:
     ports:
       - "5432:5432"
 
+    networks:
+      - default
+
   app:
     restart: unless-stopped
     build: .
+
+    networks:
+      - caddy_enabled
+      - default
 
     ports: 
      - "5000:5000"
@@ -34,3 +42,12 @@ services:
 
     depends_on:
       - db
+
+    networks:
+      - default
+
+networks:
+  caddy_enabled:
+     external: true
+  default:
+
