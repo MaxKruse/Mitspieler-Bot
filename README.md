@@ -1,5 +1,7 @@
 [![Go](https://github.com/MaxKruse/Mitspieler-Bot/actions/workflows/go.yml/badge.svg?branch=master)](https://github.com/MaxKruse/Mitspieler-Bot/actions/workflows/go.yml)
 
+# NOT FUNCTIONAL ANYMORE!!!
+
 # Mitspieler Bot
 
 This webserver provides endpoints, currently used by [Agurin](https://twitch.tv/agurin)
@@ -32,7 +34,7 @@ To have you or a streamer near you supported, please message BH_Lithium on twitc
 
 Add a command with the following syntax:
 
-`$(urlfetch https://mkruse.ddnss.de/streamer/$(Channel)?requester=$(User))`
+<redacted, not in use anymore>
 
 ![Moobot Example](examples/moobot.png)
 
